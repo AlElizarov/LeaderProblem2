@@ -22,15 +22,17 @@ public class TestMyList {
 
 	@Test
 	public void test() {
-		MyRingList list = new MyRingList();
-		assertTrue(list.isEmpty());
+		assertTrue(!list.isEmpty());
 	}
 	
 	@Test
 	public void testAddition() {
-		MyRingList list = new MyRingList();
-		list.add(new Agent(3));
 		assertEquals(3, list.size());
+	}
+	
+	@Test
+	public void testPrint() {
+		assertEquals("( 8 7 9)", list.toString());
 	}
 
 }

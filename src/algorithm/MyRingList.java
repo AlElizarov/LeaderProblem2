@@ -34,4 +34,25 @@ public class MyRingList {
 		return size;
 	}
 
+	@Override
+	public String toString() {
+		String s = "(";
+		Agent next;
+		while (hasNext()) {
+			next = next();
+			s += " ";
+			s += next.getId();
+		}
+		s += ")";
+		return s;
+	}
+
+	private algorithm.Agent next() {
+		return null;
+	}
+
+	private boolean hasNext() {
+		return false;
+	}
+
 }
