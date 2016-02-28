@@ -68,5 +68,20 @@ public class TestMyList {
 		}
 		assertEquals("9 8 7 ", s);
 	}
+	
+	@Test
+	public void testValidationMsgs(){
+		Agent next;
+		while (list.hasNext()) {
+			next = list.next();
+			list.getNeiborough().setMsg(next.getId());
+		}
+		list.setMessages();
+		String s = "";
+		while(list.hasNext()){
+			s += list.next().getMsg() +" ";
+		}
+		assertEquals("9 8 0 ", s);
+	}
 
 }

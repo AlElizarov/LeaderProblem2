@@ -1,6 +1,7 @@
 package algorithm;
 
 
+
 public class MyRingList {
 
 	private int size;
@@ -39,11 +40,9 @@ public class MyRingList {
 	@Override
 	public String toString() {
 		String s = "(";
-		Agent next;
 		while (hasNext()) {
-			next = next();
 			s += " ";
-			s += next.getId();
+			s += next().getId();
 		}
 		s += ")";
 		return s;
@@ -66,6 +65,16 @@ public class MyRingList {
 
 	public Agent getNeiborough() {
 		return current.info;
+	}
+
+	public void setMessages() {
+		Agent next;
+		while(hasNext()){
+			next = next();
+			if(next.getId() > next.getMsg()){
+				next.setMsg(0);
+			}
+		}
 	}
 
 }
