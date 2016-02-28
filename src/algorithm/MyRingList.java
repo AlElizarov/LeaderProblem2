@@ -1,11 +1,13 @@
 package algorithm;
 
+
 public class MyRingList {
 
 	private int size;
 	private Node head;
 	private Node current;
 	private Node tail;
+	private int curIdx;
 
 	private class Node {
 		Agent info;
@@ -47,12 +49,19 @@ public class MyRingList {
 		return s;
 	}
 
-	private algorithm.Agent next() {
-		return null;
+	private Agent next() {
+		Node tmp = current;
+		current = current.next;
+		curIdx++;
+		return tmp.info;
 	}
 
 	private boolean hasNext() {
-		return false;
+		if (curIdx >= size) {
+			curIdx = 0;
+			return false;
+		}
+		return true;
 	}
 
 }
