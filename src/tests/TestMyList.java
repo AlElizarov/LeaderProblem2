@@ -45,18 +45,20 @@ public class TestMyList {
 	}
 	
 	@Test
-	public void testNeiborough() {
+	public void testGettingNeiborough() {
 		list.next();
 		assertEquals(7, list.getNeiborough().getId());
 		list.next();
 		assertEquals(9, list.getNeiborough().getId());
 		list.next();
 		assertEquals(8, list.getNeiborough().getId());
+		list.next();
+		assertEquals(7, list.getNeiborough().getId());
 		assertFalse(list.hasNext());
 	}
 	
 	@Test
-	public void testNeiboroughs() {
+	public void testSendingMsgsToNeiboroughs() {
 		Agent next;
 		while (list.hasNext()) {
 			next = list.next();
@@ -67,17 +69,6 @@ public class TestMyList {
 	
 	@Test
 	public void testValidationMsgs(){
-		Agent next;
-		while (list.hasNext()) {
-			next = list.next();
-			list.getNeiborough().setMsg(next.getId());
-		}
-		list.setMessages();
-		assertEquals("9 8 0 ", list.printMsgs());
-	}
-	
-	@Test
-	public void testValidationMsgsWithoutAnyMethods(){
 		Agent next;
 		while (list.hasNext()) {
 			next = list.next();
