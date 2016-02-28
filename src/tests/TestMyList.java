@@ -75,5 +75,25 @@ public class TestMyList {
 		list.setMessages();
 		assertEquals("9 8 0 ", list.printMsgs());
 	}
+	
+	@Test
+	public void testValidationMsgsWithoutAnyMethods(){
+		Agent next;
+		while (list.hasNext()) {
+			next = list.next();
+			list.getNeiborough().setMsg(next.getId());
+		}
+		assertEquals("9 8 7 ", list.printMsgs());
+		while (list.hasNext()) {
+			next = list.next();
+			if (next.getId() < next.getMsg()) {
+				list.getNeiborough().setNewMsg(next.getMsg());
+			} else {
+				list.getNeiborough().setNewMsg(0);
+			}
+		}
+		list.setMessages();
+		assertEquals("0 9 8 ", list.printMsgs());
+	}
 
 }

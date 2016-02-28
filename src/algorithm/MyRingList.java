@@ -3,6 +3,7 @@ package algorithm;
 
 
 
+
 public class MyRingList {
 
 	private int size;
@@ -70,11 +71,9 @@ public class MyRingList {
 
 	public void setMessages() {
 		Agent next;
-		while(hasNext()){
+		while (hasNext()) {
 			next = next();
-			if(next.getId() > next.getMsg()){
-				next.setMsg(0);
-			}
+			next.setMsg(next.getNewMsg());
 		}
 	}
 
