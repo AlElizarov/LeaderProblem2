@@ -62,11 +62,7 @@ public class TestMyList {
 			next = list.next();
 			list.getNeiborough().setMsg(next.getId());
 		}
-		String s = "";
-		while(list.hasNext()){
-			s += list.next().getMsg() +" ";
-		}
-		assertEquals("9 8 7 ", s);
+		assertEquals("9 8 7 ", list.printMsgs());
 	}
 	
 	@Test
@@ -77,11 +73,7 @@ public class TestMyList {
 			list.getNeiborough().setMsg(next.getId());
 		}
 		list.setMessages();
-		String s = "";
-		while(list.hasNext()){
-			s += list.next().getMsg() +" ";
-		}
-		assertEquals("9 8 0 ", s);
+		assertEquals("9 8 0 ", list.printMsgs());
 	}
 
 }

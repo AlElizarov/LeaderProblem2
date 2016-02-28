@@ -2,6 +2,7 @@ package algorithm;
 
 
 
+
 public class MyRingList {
 
 	private int size;
@@ -33,7 +34,7 @@ public class MyRingList {
 		size++;
 	}
 
-	public Object size() {
+	public int size() {
 		return size;
 	}
 
@@ -75,6 +76,14 @@ public class MyRingList {
 				next.setMsg(0);
 			}
 		}
+	}
+
+	public String printMsgs() {
+		String s = "";
+		while(hasNext()){
+			s += next().getMsg() +" ";
+		}
+		return s;
 	}
 
 }
