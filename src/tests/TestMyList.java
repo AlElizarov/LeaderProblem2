@@ -54,5 +54,19 @@ public class TestMyList {
 		assertEquals(8, list.getNeiborough().getId());
 		assertFalse(list.hasNext());
 	}
+	
+	@Test
+	public void testNeiboroughs() {
+		Agent next;
+		while (list.hasNext()) {
+			next = list.next();
+			list.getNeiborough().setMsg(next.getId());
+		}
+		String s = "";
+		while(list.hasNext()){
+			s += list.next().getMsg() +" ";
+		}
+		assertEquals("9 8 7 ", s);
+	}
 
 }
