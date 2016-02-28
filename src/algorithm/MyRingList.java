@@ -49,14 +49,14 @@ public class MyRingList {
 		return s;
 	}
 
-	private Agent next() {
+	public Agent next() {
 		Node tmp = current;
 		current = current.next;
 		curIdx++;
 		return tmp.info;
 	}
 
-	private boolean hasNext() {
+	public boolean hasNext() {
 		if (curIdx >= size) {
 			curIdx = 0;
 			return false;

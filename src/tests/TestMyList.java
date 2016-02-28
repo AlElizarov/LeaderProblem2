@@ -34,5 +34,14 @@ public class TestMyList {
 	public void testPrint() {
 		assertEquals("( 8 7 9)", list.toString());
 	}
+	
+	@Test
+	public void testCicleNext() {
+		assertEquals(8, list.next().getId());
+		assertEquals(7, list.next().getId());
+		assertEquals(9, list.next().getId());
+		assertEquals(8, list.next().getId());
+		assertFalse(list.hasNext());
+	}
 
 }
