@@ -64,4 +64,8 @@ public class MyRingList {
 		return true;
 	}
 
+	public Agent getNeiborough() {
+		return current.info;
+	}
+
 }

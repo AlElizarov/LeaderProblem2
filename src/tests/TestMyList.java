@@ -43,5 +43,16 @@ public class TestMyList {
 		assertEquals(8, list.next().getId());
 		assertFalse(list.hasNext());
 	}
+	
+	@Test
+	public void testNeiborough() {
+		list.next();
+		assertEquals(7, list.getNeiborough().getId());
+		list.next();
+		assertEquals(9, list.getNeiborough().getId());
+		list.next();
+		assertEquals(8, list.getNeiborough().getId());
+		assertFalse(list.hasNext());
+	}
 
 }
