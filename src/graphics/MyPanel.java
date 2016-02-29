@@ -15,8 +15,8 @@ public class MyPanel extends JPanel{
 	
 	private int quantity = 39;
 	private int roundCenterX = 400;
-	private int roundCenterY = 320;
-	private int radius = 300;
+	private int roundCenterY = 300;
+	private int radius = 270;
 	private int width;
 	private int height;
 	private int ARR_SIZE;
@@ -28,13 +28,13 @@ public class MyPanel extends JPanel{
 
 	public MyPanel() {
 		if (quantity < 10) {
-			setParametres(35, 10, 28, 20);
+			setParametres(35, 10, 24, 20);
 		} else if (quantity < 20) {
-			setParametres(30, 8, 24, 18);
+			setParametres(30, 8, 20, 18);
 		} else if (quantity < 30) {
-			setParametres(25, 6, 18, 16);
+			setParametres(25, 6, 16, 16);
 		} else if (quantity < 40) {
-			setParametres(20, 4, 16, 14);
+			setParametres(20, 4, 14, 14);
 		}
 	}
 
