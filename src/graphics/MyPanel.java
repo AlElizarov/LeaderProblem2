@@ -22,7 +22,7 @@ public class MyPanel extends JPanel{
 	private int ARR_SIZE;
 	private int msgSize;
 	private int ballSize;
-	private boolean isBidirect = true;
+	private boolean isBidirect = false;
 	private MyRingList list;
 	private int taskStep;
 

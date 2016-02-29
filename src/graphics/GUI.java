@@ -130,8 +130,8 @@ public class GUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				boolean b =LeaderElection.solve(list, taskStep++);
-				if (b) {
+				LeaderElection.solve(list, taskStep++);
+				if (taskStep == quantity) {
 					taskStep = 0;
 				}
 				updateFrame();
@@ -149,7 +149,8 @@ public class GUI {
 
 					@Override
 					protected Void doInBackground() throws Exception {
-						while (!LeaderElection.solve(list, taskStep++)) {
+						while (taskStep != quantity) {
+							LeaderElection.solve(list, taskStep++);
 							Thread.sleep(1000);
 							publish();
 							Thread.sleep(1000);
@@ -169,6 +170,7 @@ public class GUI {
 						stop.setEnabled(false);
 						setup.setEnabled(true);
 						stepButtop.setEnabled(true);
+						go.setEnabled(true);
 					}
 
 				};
