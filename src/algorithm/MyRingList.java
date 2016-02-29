@@ -74,6 +74,9 @@ public class MyRingList {
 			} else {
 				getNeiborough().setNewMsg(0);
 			}
+		}
+		while (hasNext()) {
+			next = next();
 			next.setMsg(next.getNewMsg());
 		}
 	}

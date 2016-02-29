@@ -15,7 +15,9 @@ public class LeaderElection {
 				return;
 			}
 		}
-		list.setMessages();
+		if (i != 0) {
+			list.setMessages();
+		}
 	}
 
 }
