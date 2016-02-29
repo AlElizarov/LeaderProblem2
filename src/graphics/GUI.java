@@ -2,11 +2,15 @@ package graphics;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -14,6 +18,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.EmptyBorder;
 
 import algorithm.Agent;
 import algorithm.LeaderElection;
@@ -21,17 +29,26 @@ import algorithm.MyRingList;
 
 public class GUI {
 
-	private int quantity = 39;
+	private int quantity = 7;
 	private MyPanel PanelWithPicture;
 	private MyRingList list;
 	private int taskStep;
 	private JSplitPane rightSplit;
 	private JFrame frame;
+	private SwingWorker<Void, Void> sw;
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
+				try {
+					UIManager.setLookAndFeel(UIManager
+							.getSystemLookAndFeelClassName());
+				} catch (ClassNotFoundException | InstantiationException
+						| IllegalAccessException
+						| UnsupportedLookAndFeelException e) {
+					e.printStackTrace();
+				}
 				new GUI();
 			}
 		});
@@ -43,6 +60,7 @@ public class GUI {
 
 		frame = new JFrame();
 		frame.setSize(1000, 700);
+		frame.setLocationRelativeTo(null);
 		frame.getContentPane().add(createMainPanel());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
@@ -85,14 +103,20 @@ public class GUI {
 		taskStep = 0;
 	}
 
-	private JPanel createButtonPanel() {
-		JPanel buttonPanel = new JPanel();
+	private Box createButtonPanel() {
+		Box verticalBoxForTaskMainInfo = Box.createVerticalBox();
 		JButton setup = new JButton("setup");
-		JButton stepButtop = new JButton("step");
+		JButton stepButtop = new JButton(" step ");
 		setup.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (sw != null) {
+					sw.cancel(true);
+				}
+				setData();
+				PanelWithPicture.setList(list);
+				PanelWithPicture.setStep(taskStep);
 				stepButtop.setEnabled(true);
 				rightSplit.setVisible(true);
 				frame.repaint();
@@ -115,13 +139,57 @@ public class GUI {
 				}
 			}
 		});
-		buttonPanel.add(setup);
-		buttonPanel.add(stepButtop);
-		return buttonPanel;
+		JButton go = new JButton("  go  ");
+		go.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sw = new SwingWorker<Void, Void>() {
+
+					@Override
+					protected Void doInBackground() throws Exception {
+						while (taskStep < quantity) {
+							LeaderElection.solve(list, taskStep++);
+							Thread.sleep(1000);
+							publish();
+							Thread.sleep(1000);
+						}
+						return null;
+					}
+
+					protected void process(List<Void> chunks) {
+						PanelWithPicture.setList(list);
+						PanelWithPicture.setStep(taskStep);
+						frame.repaint();
+					}
+
+				};
+				sw.execute();
+			}
+		});
+		JButton stop = new JButton(" stop ");
+		stop.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sw.cancel(true);
+			}
+		});
+		Box buttonBoxForSetupAndStep = Box.createHorizontalBox();
+		buttonBoxForSetupAndStep.add(setup);
+		buttonBoxForSetupAndStep.add(stepButtop);
+		Box buttonBoxForGoAndStop = Box.createHorizontalBox();
+		buttonBoxForGoAndStop.add(go);
+		buttonBoxForGoAndStop.add(stop);
+		verticalBoxForTaskMainInfo.add(Box.createVerticalStrut(50));
+		verticalBoxForTaskMainInfo.add(buttonBoxForSetupAndStep);
+		verticalBoxForTaskMainInfo.add(buttonBoxForGoAndStop);
+		verticalBoxForTaskMainInfo.setBorder(new EmptyBorder(0, 20, 0, 20));
+		return verticalBoxForTaskMainInfo;
 	}
 
 	private void createPanelWithPicture() {
-		PanelWithPicture = new MyPanel();
+		PanelWithPicture = new MyPanel(quantity);
 		PanelWithPicture.setList(list);
 		PanelWithPicture.setStep(taskStep);
 	}

@@ -13,7 +13,7 @@ import algorithm.MyRingList;
 
 public class MyPanel extends JPanel{
 	
-	private int quantity = 39;
+	private int quantity;
 	private int roundCenterX = 400;
 	private int roundCenterY = 300;
 	private int radius = 270;
@@ -26,7 +26,8 @@ public class MyPanel extends JPanel{
 	private MyRingList list;
 	private int taskStep;
 
-	public MyPanel() {
+	public MyPanel(int quantity) {
+		this.quantity = quantity;
 		if (quantity < 10) {
 			setParametres(35, 10, 24, 20);
 		} else if (quantity < 20) {
