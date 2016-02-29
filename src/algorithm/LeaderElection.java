@@ -2,7 +2,7 @@ package algorithm;
 
 public class LeaderElection {
 
-	public static void solve(MyRingList list, int i) {
+	public static boolean solve(MyRingList list, int i) {
 		Agent next;
 		while (list.hasNext()) {
 			next = list.next();
@@ -11,13 +11,27 @@ public class LeaderElection {
 				list.getNeiborough().setNewMsg(next.getId());
 				continue;
 			}
-			if (next.getId() == next.getMsg()) {
-				return;
+			if (next.getId() < next.getMsg()) {
+				list.getNeiborough().setNewMsg(next.getMsg());
+			} else {
+				list.getNeiborough().setNewMsg(0);
+			}
+			if (list.getNeiborough().getId() == list.getNeiborough()
+					.getNewMsg()) {
+				while (list.hasNext()) {
+					next = list.next();
+					if (next.getId() < next.getMsg()) {
+						list.getNeiborough().setNewMsg(next.getMsg());
+					} else {
+						list.getNeiborough().setNewMsg(0);
+					}
+				}
+				list.setMessages();
+				return true;
 			}
 		}
-		if (i != 0) {
-			list.setMessages();
-		}
+		list.setMessages();
+		return false;
 	}
 
 }

@@ -69,14 +69,6 @@ public class MyRingList {
 		Agent next;
 		while (hasNext()) {
 			next = next();
-			if (next.getId() < next.getMsg()) {
-				getNeiborough().setNewMsg(next.getMsg());
-			} else {
-				getNeiborough().setNewMsg(0);
-			}
-		}
-		while (hasNext()) {
-			next = next();
 			next.setMsg(next.getNewMsg());
 		}
 	}

@@ -2,7 +2,6 @@ package graphics;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import java.util.List;
 import java.util.Random;
 
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -29,7 +27,7 @@ import algorithm.MyRingList;
 
 public class GUI {
 
-	private int quantity = 7;
+	private int quantity = 3;
 	private MyPanel PanelWithPicture;
 	private MyRingList list;
 	private int taskStep;
@@ -55,10 +53,11 @@ public class GUI {
 	}
 
 	public GUI() {
+		frame = new JFrame();
+		
 		setData();
 		createPanelWithPicture();
 
-		frame = new JFrame();
 		frame.setSize(1000, 700);
 		frame.setLocationRelativeTo(null);
 		frame.getContentPane().add(createMainPanel());
@@ -107,6 +106,8 @@ public class GUI {
 		Box verticalBoxForTaskMainInfo = Box.createVerticalBox();
 		JButton setup = new JButton("setup");
 		JButton stepButtop = new JButton(" step ");
+		JButton go = new JButton("  go  ");
+		JButton stop = new JButton(" stop ");
 		setup.addActionListener(new ActionListener() {
 
 			@Override
@@ -115,11 +116,11 @@ public class GUI {
 					sw.cancel(true);
 				}
 				setData();
-				PanelWithPicture.setList(list);
-				PanelWithPicture.setStep(taskStep);
+				System.out.println(list);
+				updateFrame();
 				stepButtop.setEnabled(true);
+				go.setEnabled(true);
 				rightSplit.setVisible(true);
-				frame.repaint();
 				frame.revalidate();
 			}
 
@@ -129,52 +130,62 @@ public class GUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				LeaderElection.solve(list, taskStep++);
-				PanelWithPicture.setList(list);
-				PanelWithPicture.setStep(taskStep);
-				frame.repaint();
-				if (taskStep >= quantity) {
-					stepButtop.setEnabled(false);
+				boolean b =LeaderElection.solve(list, taskStep++);
+				if (b) {
 					taskStep = 0;
 				}
+				updateFrame();
 			}
 		});
-		JButton go = new JButton("  go  ");
 		go.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				stop.setEnabled(true);
+				setup.setEnabled(false);
+				stepButtop.setEnabled(false);
+				go.setEnabled(false);
 				sw = new SwingWorker<Void, Void>() {
 
 					@Override
 					protected Void doInBackground() throws Exception {
-						while (taskStep < quantity) {
-							LeaderElection.solve(list, taskStep++);
+						while (!LeaderElection.solve(list, taskStep++)) {
 							Thread.sleep(1000);
 							publish();
 							Thread.sleep(1000);
 						}
+						taskStep= 0;
 						return null;
 					}
-
+					
+					@Override
 					protected void process(List<Void> chunks) {
-						PanelWithPicture.setList(list);
-						PanelWithPicture.setStep(taskStep);
-						frame.repaint();
+						updateFrame();
+					}
+					
+					@Override
+					protected void done() {
+						updateFrame();
+						stop.setEnabled(false);
+						setup.setEnabled(true);
+						stepButtop.setEnabled(true);
 					}
 
 				};
 				sw.execute();
 			}
 		});
-		JButton stop = new JButton(" stop ");
+		go.setEnabled(false);
 		stop.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				sw.cancel(true);
+				stepButtop.setEnabled(true);
+				go.setEnabled(true);
 			}
 		});
+		stop.setEnabled(false);
 		Box buttonBoxForSetupAndStep = Box.createHorizontalBox();
 		buttonBoxForSetupAndStep.add(setup);
 		buttonBoxForSetupAndStep.add(stepButtop);
@@ -190,8 +201,13 @@ public class GUI {
 
 	private void createPanelWithPicture() {
 		PanelWithPicture = new MyPanel(quantity);
+		updateFrame();
+	}
+	
+	private void updateFrame(){
 		PanelWithPicture.setList(list);
 		PanelWithPicture.setStep(taskStep);
+		frame.repaint();
 	}
 
 }
