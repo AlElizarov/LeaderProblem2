@@ -32,7 +32,7 @@ public class TestMyList {
 	
 	@Test
 	public void testPrint() {
-		assertEquals("( 8 7 9)", list.toString());
+		assertEquals("8, 7, 9", list.toString());
 	}
 	
 	@Test
@@ -64,7 +64,7 @@ public class TestMyList {
 			next = list.next();
 			list.getNeiborough().setMsg(next.getId());
 		}
-		assertEquals("9 8 7 ", list.printMsgs());
+		assertEquals("9, 8, 7", list.printMsgs());
 	}
 	
 	@Test
@@ -74,7 +74,7 @@ public class TestMyList {
 			next = list.next();
 			list.getNeiborough().setMsg(next.getId());
 		}
-		assertEquals("9 8 7 ", list.printMsgs());
+		assertEquals("9, 8, 7", list.printMsgs());
 		while (list.hasNext()) {
 			next = list.next();
 			if (next.getId() < next.getMsg()) {
@@ -84,7 +84,7 @@ public class TestMyList {
 			}
 		}
 		list.setMessages();
-		assertEquals("0 9 8 ", list.printMsgs());
+		assertEquals("0, 9, 8", list.printMsgs());
 	}
 
 }
