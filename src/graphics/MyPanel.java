@@ -13,6 +13,10 @@ import algorithm.MyRingList;
 
 public class MyPanel extends JPanel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int quantity;
 	private int roundCenterX = 350;
 	private int roundCenterY = 300;
