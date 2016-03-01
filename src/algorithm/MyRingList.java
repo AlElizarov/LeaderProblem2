@@ -37,12 +37,12 @@ public class MyRingList {
 
 	@Override
 	public String toString() {
-		String s = "(";
+		String s = "";
 		while (hasNext()) {
-			s += " ";
 			s += next().getId();
+			if(curIdx < size)
+				s += ", ";
 		}
-		s += ")";
 		return s;
 	}
 
@@ -83,8 +83,19 @@ public class MyRingList {
 
 	public String printMsgs() {
 		String s = "";
+		Agent next;
 		while (hasNext()) {
-			s += next().getMsg() + " ";
+			next = next();
+			if(next.getMsg() != 0){
+				s += "<font color = red>";
+			}
+			else{
+				s += "<font color = balck>";
+			}
+			s += next.getMsg();
+			s += "</font>";
+			if(curIdx < size)
+				s += ", ";
 		}
 		return s;
 	}
