@@ -1,6 +1,6 @@
 package algorithm;
 
-public class MyRingList {
+public class MyRingList implements MyAbstractList{
 
 	private int size;
 	private Node head;

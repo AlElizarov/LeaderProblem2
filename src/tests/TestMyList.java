@@ -6,11 +6,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import algorithm.Agent;
+import algorithm.MyAbstractList;
 import algorithm.MyRingList;
 
 public class TestMyList {
 	
-	private MyRingList list;
+	private MyAbstractList list;
 	
 	@Before
 	public void setUp() {
