@@ -40,7 +40,7 @@ public class MyRingList {
 		String s = "";
 		while (hasNext()) {
 			s += next().getId();
-			if(curIdx < size)
+			if (curIdx < size)
 				s += ", ";
 		}
 		return s;
@@ -75,7 +75,7 @@ public class MyRingList {
 				getNeiborough().setNewMsg(0);
 			}
 		}
-		while(hasNext()){
+		while (hasNext()) {
 			next = next();
 			next.setMsg(next.getNewMsg());
 		}
@@ -86,18 +86,25 @@ public class MyRingList {
 		Agent next;
 		while (hasNext()) {
 			next = next();
-			if(next.getMsg() != 0){
+			if (next.getMsg() != 0) {
 				s += "<font color = red>";
-			}
-			else{
+			} else {
 				s += "<font color = balck>";
 			}
 			s += next.getMsg();
 			s += "</font>";
-			if(curIdx < size)
+			if (curIdx < size)
 				s += ", ";
 		}
 		return s;
 	}
+
+//	public Agent next(int i) {
+//		Node tmp = current;
+//		for (int j = 0; j < i - 1; j++) {
+//			tmp = tmp.next;
+//		}
+//		return tmp.info;
+//	}
 
 }

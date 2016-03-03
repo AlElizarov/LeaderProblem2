@@ -56,35 +56,5 @@ public class TestMyList {
 		assertEquals(7, list.getNeiborough().getId());
 		assertFalse(list.hasNext());
 	}
-	
-	@Test
-	public void testSendingMsgsToNeiboroughs() {
-		Agent next;
-		while (list.hasNext()) {
-			next = list.next();
-			list.getNeiborough().setMsg(next.getId());
-		}
-		assertEquals("9, 8, 7", list.printMsgs());
-	}
-	
-	@Test
-	public void testValidationMsgs(){
-		Agent next;
-		while (list.hasNext()) {
-			next = list.next();
-			list.getNeiborough().setMsg(next.getId());
-		}
-		assertEquals("9, 8, 7", list.printMsgs());
-		while (list.hasNext()) {
-			next = list.next();
-			if (next.getId() < next.getMsg()) {
-				list.getNeiborough().setNewMsg(next.getMsg());
-			} else {
-				list.getNeiborough().setNewMsg(0);
-			}
-		}
-		list.setMessages();
-		assertEquals("0, 9, 8", list.printMsgs());
-	}
 
 }
