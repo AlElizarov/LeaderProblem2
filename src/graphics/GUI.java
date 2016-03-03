@@ -28,6 +28,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
@@ -44,7 +45,8 @@ import algorithm.MyRingList;
 public class GUI {
 
 	private int quantity;
-	private MyPanel panelWithPicture;
+	private boolean isBidirect;
+	private MyAbstractPanel panelWithPicture;
 	private MyRingList list;
 	private int taskStep;
 	private JSplitPane rightSplit;
@@ -82,10 +84,9 @@ public class GUI {
 
 	public GUI() {
 		frame = new JFrame("LEADER ELECTION");
-
+		
+		//refact
 		setData();
-		createPanelWithPicture();
-
 		ImageIcon image = new ImageIcon("images/leaderIcon.png");
 		frame.setIconImage(image.getImage());
 
@@ -124,7 +125,6 @@ public class GUI {
 
 	private Component createRightSplit() {
 		rightSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
-		rightSplit.setTopComponent(panelWithPicture);
 		rightSplit.setDividerLocation(0.9);
 		rightSplit.setResizeWeight(0.95);
 		textAreaForTextMode = new JTextPane();
@@ -254,7 +254,12 @@ public class GUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				setButtonsVisibility(false, false, false, true);
-				sw = new SwingWorkerForButtonGo<Void, Void>();
+				if (!isBidirect) {
+					sw = new SwingWorkerForButtonGo<Void, Void>();
+				}
+				else{
+					sw = new SwingWorkerForButtonGoBiDirect<Void, Void>();
+				}
 				sw.execute();
 			}
 		});
@@ -262,28 +267,11 @@ public class GUI {
 
 	private void createStepButton() {
 		stepButtop = new JButton(" step ");
-		stepButtop.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (taskStep == 0) {
-					textModeString.append("<b>Получение сообщений:</b><br>");
-					textAreaForTextMode.setText(textModeString.toString());
-				}
-				LeaderElection.solve(list, taskStep++);
-				textModeString.append("<b>Шаг " + taskStep + ":</b> "
-						+ list.printMsgs() + "<br>");
-				textAreaForTextMode.setText(textModeString.toString());
-				if (taskStep == quantity) {
-					taskStep = 0;
-					textModeString
-							.append("<b><font size = 6>ЛИДЕР НАЙДЕН!!! Id лидера: "
-									+ quantity + "</font></b><br>");
-					textAreaForTextMode.setText(textModeString.toString());
-				}
-				updateFrame();
-			}
-		});
+		if (!isBidirect) {
+			stepButtop.addActionListener(new StepListenerOneDirect());
+		} else {
+			stepButtop.addActionListener(new StepListenerBiDirect());
+		}
 	}
 
 	private void createSetupButton() {
@@ -305,6 +293,7 @@ public class GUI {
 						quantityField.setText("");
 					}
 					quantityField.requestFocus();
+					splitReset();
 					return;
 				}
 				if (hand.isSelected()) {
@@ -321,6 +310,7 @@ public class GUI {
 												"Некорректный значение: "
 														+ "Не должно быть повторяющихся элементов");
 								textAreaForList.requestFocus();
+								splitReset();
 								return;
 							}
 							if (element <= 0) {
@@ -330,6 +320,7 @@ public class GUI {
 												"Некорректное значение: "
 														+ "Элементы должны быть больше нуля");
 								textAreaForList.requestFocus();
+								splitReset();
 								return;
 							}
 						} catch (Exception exc) {
@@ -340,6 +331,7 @@ public class GUI {
 													+ "Пожалуйста вводите только целые числа через запятую");
 							textAreaForList.requestFocus();
 							textAreaForList.setText("");
+							splitReset();
 							return;
 						}
 					}
@@ -348,6 +340,7 @@ public class GUI {
 								"Некорректный формат ввода: "
 										+ "Неверное количесвто элементов");
 						textAreaForList.requestFocus();
+						splitReset();
 						return;
 					}
 					Iterator<Integer> iter = intItems.iterator();
@@ -355,23 +348,28 @@ public class GUI {
 						list.add(new Agent(iter.next()));
 					}
 				} else {
+					//refact
 					setData();
-					taskStep = 0;
 				}
-				panelWithPicture.setQuantity(quantity);
+				taskStep = 0;
 				if (comboBoxForMode.getSelectedItem()
 						.equals("Однонаправленный")) {
-					panelWithPicture.setMode(false);
+					isBidirect = false;
 				} else {
-					panelWithPicture.setMode(true);
+					isBidirect = true;
 				}
+				if (!isBidirect) {
+					panelWithPicture = new MyPanel();
+				} else {
+					panelWithPicture = new MyBiDirectPanel();
+				}
+				rightSplit.setTopComponent(panelWithPicture);
+				panelWithPicture.setQuantity(quantity);
 				textAreaForTextMode.setContentType("text/html");
 				textModeString = new StringBuilder(
 						"<b>Располажение узлов:</b> " + list + "<br>");
 				textAreaForTextMode.setText(textModeString.toString());
 				updateFrame();
-				stepButtop.setEnabled(true);
-				go.setEnabled(true);
 				setButtonsVisibility(true, true, true, false);
 				rightSplit.setVisible(true);
 				if (quantity >= 40) {
@@ -382,11 +380,6 @@ public class GUI {
 			}
 
 		});
-	}
-
-	private void createPanelWithPicture() {
-		panelWithPicture = new MyPanel();
-		updateFrame();
 	}
 
 	private void updateFrame() {
@@ -401,6 +394,11 @@ public class GUI {
 		stepButtop.setEnabled(stepVisibility);
 		go.setEnabled(goVisibility);
 		stop.setEnabled(stopVisibility);
+	}
+	
+	private void splitReset(){
+		rightSplit.setVisible(false);
+		setButtonsVisibility(true, false, false, false);
 	}
 
 	private class SwingWorkerForButtonGo<T, V> extends SwingWorker<T, V> {
@@ -444,6 +442,49 @@ public class GUI {
 			}
 		}
 
+	}
+
+	private class StepListenerOneDirect implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (taskStep == 0) {
+				textModeString.append("<b>Получение сообщений:</b><br>");
+				textAreaForTextMode.setText(textModeString.toString());
+			}
+			LeaderElection.solve(list, taskStep++);
+			textModeString.append("<b>Шаг " + taskStep + ":</b> "
+					+ list.printMsgs() + "<br>");
+			textAreaForTextMode.setText(textModeString.toString());
+			if (taskStep == quantity) {
+				taskStep = 0;
+				textModeString
+						.append("<b><font size = 6>ЛИДЕР НАЙДЕН!!! Id лидера: "
+								+ quantity + "</font></b><br>");
+				textAreaForTextMode.setText(textModeString.toString());
+			}
+			updateFrame();
+		}
+
+	}
+
+	private class StepListenerBiDirect implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+		}
+
+	}
+	
+	private class SwingWorkerForButtonGoBiDirect<T, V> extends SwingWorker<T, V>{
+
+		@Override
+		protected T doInBackground() throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
 	}
 
 }
