@@ -13,10 +13,12 @@ public class MyRingList implements MyAbstractList{
 		Node next;
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return size == 0;
 	}
 
+	@Override
 	public void add(Agent agent) {
 		Node tmp = new Node();
 		tmp.info = agent;
@@ -31,6 +33,7 @@ public class MyRingList implements MyAbstractList{
 		size++;
 	}
 
+	@Override
 	public int size() {
 		return size;
 	}
@@ -46,6 +49,7 @@ public class MyRingList implements MyAbstractList{
 		return s;
 	}
 
+	@Override
 	public Agent next() {
 		Node tmp = current;
 		current = current.next;
@@ -53,6 +57,7 @@ public class MyRingList implements MyAbstractList{
 		return tmp.info;
 	}
 
+	@Override
 	public boolean hasNext() {
 		if (curIdx >= size) {
 			curIdx = 0;
@@ -61,7 +66,8 @@ public class MyRingList implements MyAbstractList{
 		return true;
 	}
 
-	public Agent getNeiborough() {
+	@Override
+	public Agent getNextNeiborough() {
 		return current.info;
 	}
 
@@ -70,9 +76,9 @@ public class MyRingList implements MyAbstractList{
 		while (hasNext()) {
 			next = next();
 			if (next.getId() < next.getMsg()) {
-				getNeiborough().setNewMsg(next.getMsg());
+				getNextNeiborough().setNewMsg(next.getMsg());
 			} else {
-				getNeiborough().setNewMsg(0);
+				getNextNeiborough().setNewMsg(0);
 			}
 		}
 		while (hasNext()) {

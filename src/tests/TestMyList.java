@@ -48,13 +48,13 @@ public class TestMyList {
 	@Test
 	public void testGettingNeiborough() {
 		list.next();
-		assertEquals(7, list.getNeiborough().getId());
+		assertEquals(7, list.getNextNeiborough().getId());
 		list.next();
-		assertEquals(9, list.getNeiborough().getId());
+		assertEquals(9, list.getNextNeiborough().getId());
 		list.next();
-		assertEquals(8, list.getNeiborough().getId());
+		assertEquals(8, list.getNextNeiborough().getId());
 		list.next();
-		assertEquals(7, list.getNeiborough().getId());
+		assertEquals(7, list.getNextNeiborough().getId());
 		assertFalse(list.hasNext());
 	}
 

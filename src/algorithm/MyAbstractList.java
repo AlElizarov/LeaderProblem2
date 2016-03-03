@@ -12,6 +12,10 @@ public interface MyAbstractList {
 
 	public boolean hasNext();
 
-	public Agent getNeiborough();
+	public Agent getNextNeiborough();
+
+	public void setMessages();
+
+	public String printMsgs();
 
 }

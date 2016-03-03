@@ -39,6 +39,7 @@ import javax.swing.border.TitledBorder;
 import net.miginfocom.swing.MigLayout;
 import algorithm.Agent;
 import algorithm.LeaderElection;
+import algorithm.MyAbstractList;
 import algorithm.MyRingList;
 
 public class GUI {
@@ -46,7 +47,7 @@ public class GUI {
 	private int quantity;
 	private boolean isBidirect;
 	private MyAbstractPanel panelWithPicture;
-	private MyRingList list;
+	private MyAbstractList list;
 	private int taskStep;
 	private JSplitPane rightSplit;
 	private JFrame frame;
