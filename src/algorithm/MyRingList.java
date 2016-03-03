@@ -196,6 +196,48 @@ public class MyRingList implements MyAbstractList{
 		
 	}
 
+	@Override
+	public void choiceCurrentLeaders() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Object getRightRequesters() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object getLeftRequesters() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ArrayList<Integer> getCurrentLeaders() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setLeftRequests(int stage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setRightRequests(int stage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ArrayList<Integer> getNewLeftSenders() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 //	public Agent next(int i) {
 //		Node tmp = current;
 //		for (int j = 0; j < i - 1; j++) {

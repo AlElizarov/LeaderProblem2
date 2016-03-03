@@ -9,6 +9,15 @@ public class Agent {
 	private int rightMsg;
 	private int newLeftMsg;
 	private int newRightMsg;
+	private boolean leftOk;
+
+	public boolean isLeftOk() {
+		return leftOk;
+	}
+
+	public void setLeftOk(boolean leftOk) {
+		this.leftOk = leftOk;
+	}
 
 	public int getNewLeftMsg() {
 		return newLeftMsg;

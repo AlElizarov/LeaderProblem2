@@ -50,4 +50,18 @@ public interface MyAbstractList {
 
 	public void initiateRightSenders();
 
+	public void choiceCurrentLeaders();
+
+	public Object getRightRequesters();
+
+	public Object getLeftRequesters();
+
+	public void setLeftRequests(int stage);
+
+	public void setRightRequests(int stage);
+
+	public ArrayList<Integer> getCurrentLeaders();
+
+	public ArrayList<Integer> getNewLeftSenders();
+
 }
