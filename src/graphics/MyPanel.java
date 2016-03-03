@@ -33,11 +33,14 @@ public class MyPanel extends MyAbstractPanel {
 		if (quantity == 2) {
 			ARR_SIZE = 8;
 			drawArrow(graphics, newCoordX(1), newCoordY(1) - 8, newCoordX(2),
-					newCoordY(2) - 8);
+					newCoordY(2) - 8, true);
 			drawArrow(graphics, newCoordX(2), newCoordY(2) + 8, newCoordX(1),
-					newCoordY(1) + 8);
-		} else if (quantity != 1)
-			createLines(graphics);
+					newCoordY(1) + 8, true);
+		} else {
+			if (quantity != 1) {
+				createLines(graphics, false);
+			}
+		}
 		int ballIdx = 0;
 		while (list.hasNext()) {
 			Agent currentBall = list.next();
@@ -51,10 +54,11 @@ public class MyPanel extends MyAbstractPanel {
 				graphics.drawString("LEADER", xLeaderPos - 30, yLeaderPos);
 				if (quantity == 1) {
 					drawArrow(graphics, xLeaderPos, yLeaderPos, roundCenterX,
-							roundCenterY);
+							roundCenterY, true);
 				} else
 					drawArrow(graphics, xLeaderPos, yLeaderPos,
-							newCoordX(ballIdx + 1), newCoordY(ballIdx + 1));
+							newCoordX(ballIdx + 1), newCoordY(ballIdx + 1),
+							true);
 				ARR_SIZE = oldArrSize;
 			}
 

@@ -10,11 +10,9 @@ import javax.swing.JPanel;
 
 import algorithm.Agent;
 import algorithm.MyAbstractList;
-import algorithm.MyRingList;
 
-public class MyAbstractPanel extends JPanel{
+public class MyAbstractPanel extends JPanel {
 
-	
 	private static final long serialVersionUID = 1L;
 	protected int quantity;
 	protected int roundCenterX = 350;
@@ -27,7 +25,7 @@ public class MyAbstractPanel extends JPanel{
 	private int ballSize;
 	protected MyAbstractList list;
 	protected int taskStep;
-	
+
 	protected void drawBalls(Graphics graphics, int xPos, int yPos,
 			Agent currentBall) {
 		graphics.fillOval(xPos - (width / 2), yPos - (height / 2), width,
@@ -47,17 +45,23 @@ public class MyAbstractPanel extends JPanel{
 				lineCenterY);
 	}
 
-	protected void createLines(Graphics graphics) {
+	protected void createLines(Graphics graphics, boolean mode) {
 		for (int i = 0; i < quantity; i++) {
 			int xStart = newCoordX(i + 1);
 			int xEnd = newCoordX(i + 2);
 			int yStart = newCoordY(i + 1);
 			int yEnd = newCoordY(i + 2);
-			drawArrow(graphics, xStart, yStart, xEnd, yEnd);
+			if (!mode) {
+				drawArrow(graphics, xStart, yStart, xEnd, yEnd, true);
+			} else {
+				drawArrow(graphics, xStart, yStart, xEnd, yEnd, true);
+				drawArrow(graphics, xEnd, yEnd, xStart, yStart, false);
+			}
 		}
 	}
 
-	protected void drawArrow(Graphics g1, int x1, int y1, int x2, int y2) {
+	protected void drawArrow(Graphics g1, int x1, int y1, int x2, int y2,
+			boolean b) {
 		Graphics2D graphics = (Graphics2D) g1.create();
 
 		double dx = x2 - x1, dy = y2 - y1;
@@ -70,10 +74,11 @@ public class MyAbstractPanel extends JPanel{
 		// Draw horizontal arrow starting in (0, 0)
 		graphics.fillPolygon(new int[] { len, len - ARR_SIZE, len - ARR_SIZE,
 				len }, new int[] { 0, -ARR_SIZE, ARR_SIZE, 0 }, 4);
-		graphics.drawLine(0, 0, len, 0);
-		/*
-		 * else { graphics.drawLine(0, 0, 0, 0); }
-		 */
+		if (b)
+			graphics.drawLine(0, 0, len, 0);
+		else {
+			graphics.drawLine(0, 0, 0, 0);
+		}
 
 	}
 
@@ -93,7 +98,7 @@ public class MyAbstractPanel extends JPanel{
 	public int newCoordY(double idx) {
 		return (int) (roundCenterY + radius * mySin(idx * (360.0 / quantity)));
 	}
-	
+
 	public void setQuantity(int q) {
 		quantity = q;
 		if (quantity < 10) {
@@ -121,6 +126,5 @@ public class MyAbstractPanel extends JPanel{
 	public void setStep(int step) {
 		this.taskStep = step;
 	}
-
 
 }
