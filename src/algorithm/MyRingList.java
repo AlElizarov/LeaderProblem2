@@ -1,5 +1,7 @@
 package algorithm;
 
+import java.util.ArrayList;
+
 public class MyRingList implements MyAbstractList{
 
 	private int size;
@@ -103,6 +105,95 @@ public class MyRingList implements MyAbstractList{
 				s += ", ";
 		}
 		return s;
+	}
+
+	@Override
+	public String printLeftAndRightMsgs() {
+		return null;
+	}
+
+	@Override
+	public Agent get(int i) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void initiateCurrentLeaders() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void initiateLeftSenders() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setLeftSenders() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setRightRequesters() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setCorrectLeftSendersIndexes() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ArrayList<Integer> getLeftSenders() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setLeftMsgs() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setCorrectRightSendersIndexes() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ArrayList<Integer> getRightSenders() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setRighMsgs() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setLeftRequesters() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setRighSenders() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void initiateRightSenders() {
+		// TODO Auto-generated method stub
+		
 	}
 
 //	public Agent next(int i) {

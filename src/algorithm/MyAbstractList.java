@@ -1,5 +1,7 @@
 package algorithm;
 
+import java.util.ArrayList;
+
 public interface MyAbstractList {
 
 	public boolean isEmpty();
@@ -17,5 +19,35 @@ public interface MyAbstractList {
 	public void setMessages();
 
 	public String printMsgs();
+
+	public String printLeftAndRightMsgs();
+
+	public Agent get(int i);
+
+	public void initiateCurrentLeaders();
+
+	public void initiateLeftSenders();
+
+	public void setLeftSenders();
+
+	public void setRightRequesters();
+
+	public void setCorrectLeftSendersIndexes();
+
+	public ArrayList<Integer> getLeftSenders();
+
+	public void setLeftMsgs();
+
+	public void setCorrectRightSendersIndexes();
+
+	public ArrayList<Integer> getRightSenders();
+
+	public void setRighMsgs();
+
+	public void setLeftRequesters();
+
+	public void setRighSenders();
+
+	public void initiateRightSenders();
 
 }
