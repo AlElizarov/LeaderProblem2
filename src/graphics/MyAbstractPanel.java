@@ -25,6 +25,8 @@ public class MyAbstractPanel extends JPanel {
 	private int ballSize;
 	protected MyAbstractList list;
 	protected int taskStep;
+	protected int stage;
+	protected int biDirectStep;
 
 	protected void drawBalls(Graphics graphics, int xPos, int yPos,
 			Agent currentBall) {
@@ -42,6 +44,30 @@ public class MyAbstractPanel extends JPanel {
 		int lineCenterX = (x1 + x2) / 2;
 		int lineCenterY = (y1 + y2) / 2;
 		graphics.drawString("" + currentBall.getNewMsg(), lineCenterX,
+				lineCenterY);
+	}
+	
+	protected void drawLeftMsgs(Graphics graphics, int x1, int x2, int y1, int y2,
+			Agent currentBall) {
+		graphics.setColor(Color.RED);
+		graphics.setFont(new Font("Veranda", Font.BOLD, msgSize));
+		int lineCenterX = (x1 + x2) / 2;
+		int lineCenterY = (y1 + y2) / 2;
+		lineCenterX = (lineCenterX + x2) / 2;
+		lineCenterY = (lineCenterY + y2) / 2;
+		graphics.drawString("" + currentBall.getLeftMsg(), lineCenterX,
+				lineCenterY);
+	}
+	
+	protected void drawRightMsgs(Graphics graphics, int x1, int x2, int y1, int y2,
+			Agent currentBall) {
+		graphics.setColor(new Color(0, 100, 0));
+		graphics.setFont(new Font("Veranda", Font.BOLD, msgSize));
+		int lineCenterX = (x1 + x2) / 2;
+		int lineCenterY = (y1 + y2) / 2;
+		lineCenterX = (x1 + lineCenterX) / 2;
+		lineCenterY = (y1 + lineCenterY) / 2;
+		graphics.drawString("" + currentBall.getRightMsg(), lineCenterX,
 				lineCenterY);
 	}
 
@@ -125,6 +151,14 @@ public class MyAbstractPanel extends JPanel {
 
 	public void setStep(int step) {
 		this.taskStep = step;
+	}
+
+	public void setStage(int stage) {
+		this.stage = stage;
+	}
+
+	public void setBiDirectStep(int step) {
+		biDirectStep = step;
 	}
 
 }
