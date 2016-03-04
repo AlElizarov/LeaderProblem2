@@ -49,7 +49,11 @@ public class MyRingArrayList implements MyAbstractList {
 
 	@Override
 	public boolean hasNext() {
-		return false;
+		if (index >= size) {
+			index = 0;
+			return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -79,7 +83,25 @@ public class MyRingArrayList implements MyAbstractList {
 
 	@Override
 	public String printMsgs() {
-		return null;
+		String res ="";
+		res += "<i>”злы, отправл€ющие сообщени€ налево:</i> ";
+		for(int i =0; i < leftSendersIndexes.size(); i++){
+			res += leftSendersIndexes.get(i) +"  ";
+		}
+		res += "<br><i>—ообщени€ идущие по часовой стрелке:</i> ";
+		for(int i = 0; i < leftSendersIndexes.size(); i++){
+			res += get(leftSendersIndexes.get(i)).getLeftMsg()+"  ";
+		}
+		res += "<br>";
+		res += "<i>”злы, отправл€ющие сообщени€ направо:</i> ";
+		for(int i =0; i < rightSendersIndexes.size(); i++){
+			res += rightSendersIndexes.get(i) +"  ";
+		}
+		res += "<br><i>—ообщени€ идущие против часовой стрелке:</i> ";
+		for(int i = 0; i < rightSendersIndexes.size(); i++){
+			res += get(rightSendersIndexes.get(i)).getRightMsg()+"  ";
+		}
+		return res;
 	}
 
 	@Override
@@ -136,10 +158,11 @@ public class MyRingArrayList implements MyAbstractList {
 		for (int i = 0; i < leftSendersIndexes.size(); i++) {
 			if (get(leftSendersIndexes.get(i) + 1).getId() < get(
 					leftSendersIndexes.get(i) + 1).getLeftMsg()) {
-				if (leftSendersIndexes.get(i) + 1< size) {
+				if (leftSendersIndexes.get(i) + 1 < size) {
 					newLeftSendersIndexes.add(leftSendersIndexes.get(i) + 1);
 				} else {
-					newLeftSendersIndexes.add(leftSendersIndexes.get(i)+1 - size);
+					newLeftSendersIndexes.add(leftSendersIndexes.get(i) + 1
+							- size);
 				}
 			}
 		}
@@ -272,8 +295,8 @@ public class MyRingArrayList implements MyAbstractList {
 				if (rightRequesters.get(i) - (int) Math.pow(2, stage) >= 0) {
 					currentLeaders.add(rightRequesters.get(i)
 							- (int) Math.pow(2, stage));
-				}
-				else{
+
+				} else {
 					currentLeaders.add(rightRequesters.get(i)
 							- (int) Math.pow(2, stage) + size);
 				}
@@ -297,6 +320,27 @@ public class MyRingArrayList implements MyAbstractList {
 	@Override
 	public ArrayList<Integer> getNewLeftSenders() {
 		return newLeftSendersIndexes;
+	}
+
+	@Override
+	public boolean hasSolution() {
+		for (int i = 0; i < currentLeaders.size(); i++) {
+			if (get(i).getId() == get(i - 1).getLeftMsg()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int getLeaderId() {
+		int leaderId = 0;
+		for (int i = 0; i < size; i++)
+			if (get(i).getId() == get(i - 1).getLeftMsg()) {
+				leaderId = get(i).getId();
+			}
+
+		return leaderId;
 	}
 
 }
