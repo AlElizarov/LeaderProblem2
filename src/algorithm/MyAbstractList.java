@@ -63,5 +63,9 @@ public interface MyAbstractList {
 	public ArrayList<Integer> getCurrentLeaders();
 
 	public ArrayList<Integer> getNewLeftSenders();
+	
+	public boolean hasSolution();
+	
+	public int getLeaderId();
 
 }
