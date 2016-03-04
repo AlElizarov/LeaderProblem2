@@ -238,6 +238,25 @@ public class MyRingList implements MyAbstractList{
 		return null;
 	}
 
+	@Override
+	public boolean hasSolution() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public int getLeaderId() {
+		Agent next;
+		int leaderId = 0;
+		while(hasNext()){
+			next = next();
+			if(next.getId() == next.getMsg()){
+				leaderId = next.getId();
+			}
+		}
+		return leaderId;
+	}
+
 //	public Agent next(int i) {
 //		Node tmp = current;
 //		for (int j = 0; j < i - 1; j++) {
