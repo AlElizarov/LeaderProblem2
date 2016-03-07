@@ -38,14 +38,18 @@ import javax.swing.border.TitledBorder;
 
 import net.miginfocom.swing.MigLayout;
 import algorithm.Agent;
+import algorithm.BiDirectLeaderElection;
 import algorithm.LeaderElection;
+import algorithm.MyAbstractList;
+import algorithm.MyRingArrayList;
 import algorithm.MyRingList;
 
 public class GUI {
 
 	private int quantity;
-	private MyPanel panelWithPicture;
-	private MyRingList list;
+	private boolean isBidirect;
+	private MyAbstractPanel panelWithPicture;
+	private MyAbstractList list;
 	private int taskStep;
 	private JSplitPane rightSplit;
 	private JFrame frame;
@@ -60,6 +64,8 @@ public class GUI {
 	private JRadioButton hand;
 	private JTextPane textAreaForTextMode;
 	private StringBuilder textModeString;
+	private int stage;
+	private int step;
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -83,9 +89,8 @@ public class GUI {
 	public GUI() {
 		frame = new JFrame("LEADER ELECTION");
 
+		// refact
 		setData();
-		createPanelWithPicture();
-
 		ImageIcon image = new ImageIcon("images/leaderIcon.png");
 		frame.setIconImage(image.getImage());
 
@@ -124,7 +129,6 @@ public class GUI {
 
 	private Component createRightSplit() {
 		rightSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
-		rightSplit.setTopComponent(panelWithPicture);
 		rightSplit.setDividerLocation(0.9);
 		rightSplit.setResizeWeight(0.95);
 		textAreaForTextMode = new JTextPane();
@@ -140,7 +144,11 @@ public class GUI {
 
 	private void setData() {
 		ArrayList<Integer> items = new ArrayList<>();
-		list = new MyRingList();
+		if (!isBidirect) {
+			list = new MyRingList();
+		} else {
+			list = new MyRingArrayList();
+		}
 		for (int i = 0; i < quantity; i++) {
 			items.add(i + 1);
 		}
@@ -254,7 +262,11 @@ public class GUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				setButtonsVisibility(false, false, false, true);
-				sw = new SwingWorkerForButtonGo<Void, Void>();
+				if (!isBidirect) {
+					sw = new SwingWorkerForButtonGo<Void, Void>();
+				} else {
+					sw = new SwingWorkerForButtonGoBiDirect<Void, Void>();
+				}
 				sw.execute();
 			}
 		});
@@ -262,28 +274,7 @@ public class GUI {
 
 	private void createStepButton() {
 		stepButtop = new JButton(" step ");
-		stepButtop.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (taskStep == 0) {
-					textModeString.append("<b>Получение сообщений:</b><br>");
-					textAreaForTextMode.setText(textModeString.toString());
-				}
-				LeaderElection.solve(list, taskStep++);
-				textModeString.append("<b>Шаг " + taskStep + ":</b> "
-						+ list.printMsgs() + "<br>");
-				textAreaForTextMode.setText(textModeString.toString());
-				if (taskStep == quantity) {
-					taskStep = 0;
-					textModeString
-							.append("<b><font size = 6>ЛИДЕР НАЙДЕН!!! Id лидера: "
-									+ quantity + "</font></b><br>");
-					textAreaForTextMode.setText(textModeString.toString());
-				}
-				updateFrame();
-			}
-		});
 	}
 
 	private void createSetupButton() {
@@ -294,6 +285,14 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					quantity = Integer.valueOf(quantityField.getText());
+					if (quantity <= 0) {
+						JOptionPane
+								.showMessageDialog(null,
+										"Размер задачи должен быть положительным числом");
+						quantityField.requestFocus();
+						splitReset();
+						return;
+					}
 				} catch (Exception exc) {
 					if (exc.getMessage().equals("For input string: \"\"")) {
 						JOptionPane.showMessageDialog(null,
@@ -301,14 +300,26 @@ public class GUI {
 					} else {
 						JOptionPane
 								.showMessageDialog(null,
-										"Некорректный ввод: Пожалуйста вводите только целые числа");
+										"Некорректный ввод: Пожалуйста введите целое число");
 						quantityField.setText("");
 					}
 					quantityField.requestFocus();
+					splitReset();
 					return;
 				}
+				if (comboBoxForMode.getSelectedItem()
+						.equals("Однонаправленный")) {
+					isBidirect = false;
+				} else {
+					isBidirect = true;
+				}
 				if (hand.isSelected()) {
-					list = new MyRingList();
+
+					if (!isBidirect) {
+						list = new MyRingList();
+					} else {
+						list = new MyRingArrayList();
+					}
 					String[] items = textAreaForList.getText().split(",");
 					LinkedHashSet<Integer> intItems = new LinkedHashSet<>();
 					for (int i = 0; i < items.length; i++) {
@@ -321,6 +332,7 @@ public class GUI {
 												"Некорректный значение: "
 														+ "Не должно быть повторяющихся элементов");
 								textAreaForList.requestFocus();
+								splitReset();
 								return;
 							}
 							if (element <= 0) {
@@ -330,6 +342,7 @@ public class GUI {
 												"Некорректное значение: "
 														+ "Элементы должны быть больше нуля");
 								textAreaForList.requestFocus();
+								splitReset();
 								return;
 							}
 						} catch (Exception exc) {
@@ -340,6 +353,7 @@ public class GUI {
 													+ "Пожалуйста вводите только целые числа через запятую");
 							textAreaForList.requestFocus();
 							textAreaForList.setText("");
+							splitReset();
 							return;
 						}
 					}
@@ -348,6 +362,7 @@ public class GUI {
 								"Некорректный формат ввода: "
 										+ "Неверное количесвто элементов");
 						textAreaForList.requestFocus();
+						splitReset();
 						return;
 					}
 					Iterator<Integer> iter = intItems.iterator();
@@ -355,26 +370,40 @@ public class GUI {
 						list.add(new Agent(iter.next()));
 					}
 				} else {
+					// refact
 					setData();
-					taskStep = 0;
 				}
-				panelWithPicture.setQuantity(quantity);
-				if (comboBoxForMode.getSelectedItem()
-						.equals("Однонаправленный")) {
-					panelWithPicture.setMode(false);
+
+				if (!isBidirect) {
+					panelWithPicture = new MyPanel();
 				} else {
-					panelWithPicture.setMode(true);
+					panelWithPicture = new MyBiDirectPanel();
 				}
+				ActionListener[] listeners = stepButtop
+						.getListeners(ActionListener.class);
+				for (int i = 0; i < listeners.length; i++) {
+					stepButtop.removeActionListener(listeners[i]);
+				}
+				stepButtop.removeAll();
+				if (!isBidirect) {
+					stepButtop.addActionListener(new StepListenerOneDirect());
+				} else {
+					stepButtop.addActionListener(new StepListenerBiDirect());
+				}
+				taskStep = 0;
+				stage = 0;
+				step = 0;
+				rightSplit.setTopComponent(panelWithPicture);
+				panelWithPicture.setQuantity(quantity);
 				textAreaForTextMode.setContentType("text/html");
 				textModeString = new StringBuilder(
 						"<b>Располажение узлов:</b> " + list + "<br>");
 				textAreaForTextMode.setText(textModeString.toString());
 				updateFrame();
-				stepButtop.setEnabled(true);
-				go.setEnabled(true);
 				setButtonsVisibility(true, true, true, false);
 				rightSplit.setVisible(true);
-				if (quantity >= 40) {
+				if ((!isBidirect && quantity >= 40)
+						|| (isBidirect && quantity >= 20)) {
 					rightSplit.setDividerLocation(0.5);
 					rightSplit.setResizeWeight(0.5);
 				}
@@ -384,14 +413,11 @@ public class GUI {
 		});
 	}
 
-	private void createPanelWithPicture() {
-		panelWithPicture = new MyPanel();
-		updateFrame();
-	}
-
 	private void updateFrame() {
 		panelWithPicture.setList(list);
 		panelWithPicture.setStep(taskStep);
+		panelWithPicture.setStage(stage);
+		panelWithPicture.setBiDirectStep(step);
 		frame.repaint();
 	}
 
@@ -401,6 +427,11 @@ public class GUI {
 		stepButtop.setEnabled(stepVisibility);
 		go.setEnabled(goVisibility);
 		stop.setEnabled(stopVisibility);
+	}
+
+	private void splitReset() {
+		rightSplit.setVisible(false);
+		setButtonsVisibility(true, false, false, false);
 	}
 
 	private class SwingWorkerForButtonGo<T, V> extends SwingWorker<T, V> {
@@ -436,12 +467,146 @@ public class GUI {
 			setup.setEnabled(true);
 			stepButtop.setEnabled(true);
 			go.setEnabled(true);
+			int leaderId = list.getLeaderId();
+
 			if (taskStep == 0) {
 				textModeString
 						.append("<b><font size = 6>ЛИДЕР НАЙДЕН!!! Id лидера: "
-								+ quantity + "</font></b><br>");
+								+ leaderId + "</font></b><br>");
 				textAreaForTextMode.setText(textModeString.toString());
 			}
+			updateFrame();
+		}
+
+	}
+
+	private class StepListenerOneDirect implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (taskStep == 0) {
+				textModeString.append("<b>Получение сообщений:</b><br>");
+				textAreaForTextMode.setText(textModeString.toString());
+			}
+			LeaderElection.solve(list, taskStep++);
+			textModeString.append("<b>Шаг " + taskStep + ":</b> "
+					+ list.printMsgs() + "<br>");
+			textAreaForTextMode.setText(textModeString.toString());
+			if (taskStep == quantity) {
+				taskStep = 0;
+				textModeString
+						.append("<b><font size = 6>ЛИДЕР НАЙДЕН!!! Id лидера: "
+								+ list.getLeaderId() + "</font></b><br>");
+				textAreaForTextMode.setText(textModeString.toString());
+			}
+			updateFrame();
+		}
+
+	}
+
+	private class StepListenerBiDirect implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (stage == 0 && step == 0) {
+				textModeString.append("<b>Получение сообщений:</b><br>");
+				textAreaForTextMode.setText(textModeString.toString());
+			}
+
+			BiDirectLeaderElection.choice(list, stage, step);
+
+			textModeString.append("<b>Стадия: " + stage + " Шаг " + (step + 1)
+					+ ":</b> " + list.printMsgs() + "<br>");
+			textAreaForTextMode.setText(textModeString.toString());
+
+			if (Math.pow(2, stage) == step) {
+				stage++;
+				step = 0;
+			} else {
+				step++;
+			}
+
+			int loopEnd = (int) (Math.log(list.size()) / Math.log(2));
+			if ((list.size() & (list.size() - 1)) != 0 || quantity == 1) {
+				loopEnd += 1;
+
+			}
+			if (stage == loopEnd && step == list.size()) {
+
+				textModeString
+						.append("<b><font size = 6>ЛИДЕР НАЙДЕН!!! Id лидера: "
+								+ list.getLeaderId() + "</font></b><br>");
+				textAreaForTextMode.setText(textModeString.toString());
+
+				stage = 0;
+				step = 0;
+
+			}
+			if (quantity == 1 && stage == 1 && step == 0) {
+				stage = 0;
+				step = 1;
+			}
+			updateFrame();
+
+		}
+
+	}
+
+	private class SwingWorkerForButtonGoBiDirect<T, V> extends
+			SwingWorker<T, V> {
+
+		@Override
+		protected T doInBackground() throws Exception {
+			int loopEnd = (int) (Math.log(list.size()) / Math.log(2));
+			if ((list.size() & (list.size() - 1)) != 0 || quantity == 1) {
+				loopEnd += 1;
+			}
+			while (stage <= loopEnd) {
+				while (step <= Math.pow(2, stage)) {
+					Thread.sleep(2000);
+					BiDirectLeaderElection.choice(list, stage, step++);
+					if (stage == loopEnd && step == list.size()) {
+						textModeString
+								.append("<b><font size = 6>ЛИДЕР НАЙДЕН!!! Id лидера: "
+										+ list.getLeaderId()
+										+ "</font></b><br>");
+						textAreaForTextMode.setText(textModeString.toString());
+						stage = 0;
+						step = 0;
+						return null;
+					}
+					
+					if (quantity == 1 && stage == 1 && step == 0) {
+						stage = 0;
+						step = 1;
+					}
+					publish();
+				}
+				stage++;
+				step = 0;
+			}
+			stage = 0;
+			step = 0;
+			return null;
+		}
+
+		@Override
+		protected void process(List<V> chunks) {
+			if (stage == 0 && step == 1) {
+				textModeString.append("<b>Получение сообщений:</b><br>");
+				textAreaForTextMode.setText(textModeString.toString());
+			}
+			textModeString.append("<b>Стадия: " + stage + " Шаг " + (step + 1)
+					+ ":</b> " + list.printMsgs() + "<br>");
+			textAreaForTextMode.setText(textModeString.toString());
+			updateFrame();
+		}
+
+		@Override
+		protected void done() {
+			updateFrame();
+			setButtonsVisibility(true, true, true, false);
+
 		}
 
 	}

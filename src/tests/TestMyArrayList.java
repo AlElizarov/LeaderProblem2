@@ -1,26 +1,28 @@
 package tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import algorithm.Agent;
 import algorithm.MyAbstractList;
-import algorithm.MyRingList;
+import algorithm.MyRingArrayList;
 
-public class TestMyList {
+public class TestMyArrayList {
 	
 	private MyAbstractList list;
-	
+
 	@Before
 	public void setUp() {
-		list = new MyRingList();
+		list = new MyRingArrayList();
 		list.add(new Agent(8));
 		list.add(new Agent(7));
 		list.add(new Agent(9));
 	}
-
+	
 	@Test
 	public void test() {
 		assertTrue(!list.isEmpty());
