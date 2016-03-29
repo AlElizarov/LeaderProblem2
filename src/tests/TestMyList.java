@@ -41,8 +41,9 @@ public class TestMyList {
 		assertEquals(8, list.next().getId());
 		assertEquals(7, list.next().getId());
 		assertEquals(9, list.next().getId());
-		assertEquals(8, list.next().getId());
 		assertFalse(list.hasNext());
+		assertEquals(8, list.next().getId());
+		assertTrue(list.hasNext());
 	}
 	
 	@Test
@@ -53,9 +54,15 @@ public class TestMyList {
 		assertEquals(9, list.getNextNeiborough().getId());
 		list.next();
 		assertEquals(8, list.getNextNeiborough().getId());
+		assertFalse(list.hasNext());
 		list.next();
 		assertEquals(7, list.getNextNeiborough().getId());
-		assertFalse(list.hasNext());
+		assertTrue(list.hasNext());
+	}
+	
+	@Test
+	public void testSetAndPrintMsgs(){
+		list.setMessages();
 	}
 
 }
