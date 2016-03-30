@@ -7,15 +7,15 @@ public class MyRingList extends MyAbstractList {
 		Agent next;
 		while (hasNext()) {
 			next = next();
-			if (next.getId() < next.getMsg()) {
-				getNextNeiborough().setNewMsg(next.getMsg());
+			if (next.getId() < next.getLeftMsg()) {
+				getNextNeiborough().setNewLeftMsg(next.getLeftMsg());
 			} else {
-				getNextNeiborough().setNewMsg(0);
+				getNextNeiborough().setNewLeftMsg(0);
 			}
 		}
 		while (hasNext()) {
 			next = next();
-			next.setMsg(next.getNewMsg());
+			next.updateLeftMsgs();
 		}
 	}
 
@@ -24,12 +24,12 @@ public class MyRingList extends MyAbstractList {
 		Agent next;
 		while (hasNext()) {
 			next = next();
-			if (next.getMsg() != 0) {
+			if (next.getLeftMsg() != 0) {
 				s += "<font color = red>";
 			} else {
 				s += "<font color = balck>";
 			}
-			s += next.getMsg();
+			s += next.getLeftMsg();
 			s += "</font>";
 			if (index < size)
 				s += ", ";

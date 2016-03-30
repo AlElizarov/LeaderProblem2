@@ -7,8 +7,8 @@ public class LeaderElection {
 			Agent next;
 			while (list.hasNext()) {
 				next = list.next();
-				list.getNextNeiborough().setMsg(next.getId());
-				list.getNextNeiborough().setNewMsg(next.getId());
+				list.getNextNeiborough().setLeftMsg(next.getId());
+				list.getNextNeiborough().setNewLeftMsg(next.getId());
 			}
 		} else
 			list.setMessages();
