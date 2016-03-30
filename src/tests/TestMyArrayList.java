@@ -1,8 +1,7 @@
 package tests;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,54 +11,45 @@ import algorithm.MyAbstractList;
 import algorithm.MyRingArrayList;
 
 public class TestMyArrayList {
-	
+
 	private MyAbstractList list;
 
 	@Before
 	public void setUp() {
 		list = new MyRingArrayList();
-		list.add(new Agent(8));
+		list.add(new Agent(3));
 		list.add(new Agent(7));
-		list.add(new Agent(9));
+		list.add(new Agent(2));
+		list.add(new Agent(5));
+		list.add(new Agent(1));
+		list.add(new Agent(8));
+		list.add(new Agent(4));
+		list.add(new Agent(6));
+	}
+
+	@Test
+	public void testSetAndPrintMsgs() {
+		list.setMessages();
+		String res = list.printMsgs();
+		assertEquals(
+				"<i>”злы, отправл€ющие сообщени€ налево:</i> <br><i>—ообщени€ идущие по часовой стрелке:"
+				+ "</i> <br><i>”злы, отправл€ющие сообщени€ направо:"
+				+ "</i> <br><i>—ообщени€ идущие против часовой стрелке:</i> ",
+				res);
+	}
+	
+	@Test 
+	public void testGet(){
+		Agent agent = list.get(1);
+		assertEquals(7, agent.getId());
+		agent = list.get(11);
+		assertEquals(5, agent.getId());
 	}
 	
 	@Test
-	public void test() {
-		assertTrue(!list.isEmpty());
-	}
-	
-	@Test
-	public void testAddition() {
-		assertEquals(3, list.size());
-	}
-	
-	@Test
-	public void testPrint() {
-		assertEquals("8, 7, 9", list.toString());
-	}
-	
-	@Test
-	public void testCicleNext() {
-		assertEquals(8, list.next().getId());
-		assertEquals(7, list.next().getId());
-		assertEquals(9, list.next().getId());
-		assertFalse(list.hasNext());
-		assertEquals(8, list.next().getId());
-		assertTrue(list.hasNext());
-	}
-	
-	@Test
-	public void testGettingNeiborough() {
-		list.next();
-		assertEquals(7, list.getNextNeiborough().getId());
-		list.next();
-		assertEquals(9, list.getNextNeiborough().getId());
-		list.next();
-		assertEquals(8, list.getNextNeiborough().getId());
-		assertFalse(list.hasNext());
-		list.next();
-		assertEquals(7, list.getNextNeiborough().getId());
-		assertTrue(list.hasNext());
+	public void testInitiateCurrentLeaders(){
+		list.initiateCurrentLeaders();
+		assertArrayEquals(new Object[] {0, 1, 2, 3, 4, 5, 6, 7}, list.getCurrentLeaders().toArray());
 	}
 
 }

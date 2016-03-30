@@ -22,12 +22,12 @@ public class TestMyList {
 	}
 
 	@Test
-	public void test() {
+	public void testIsEmpty() {
 		assertTrue(!list.isEmpty());
 	}
 	
 	@Test
-	public void testAddition() {
+	public void testAdditionAndSize() {
 		assertEquals(3, list.size());
 	}
 	
@@ -63,6 +63,8 @@ public class TestMyList {
 	@Test
 	public void testSetAndPrintMsgs(){
 		list.setMessages();
+		String res = list.printMsgs();
+		assertEquals("<font color = balck>0</font>, <font color = balck>0</font>, <font color = balck>0</font>", res);
 	}
 
 }
