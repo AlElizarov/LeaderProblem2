@@ -77,4 +77,8 @@ public class Agent {
 		return newMsg;
 	}
 
+	public void updateLeftMsgs() {
+		setLeftMsg(getNewLeftMsg());
+	}
+
 }
