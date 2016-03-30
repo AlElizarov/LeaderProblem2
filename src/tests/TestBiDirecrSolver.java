@@ -37,24 +37,4 @@ public class TestBiDirecrSolver {
 		assertEquals(8, list.getLeaderId());
 	}
 
-	@Test
-	public void testRightRequesters() {
-		 BiDirectLeaderElection.choice(list, 0, 0);
-		 assertEquals("[2, 4, 6, 0]",
-		 list.getRightRequesters().toString());
-	}
-
-	@Test
-	public void testLeftRequesters() throws InterruptedException {
-		BiDirectLeaderElection.choice(list, 0, 0);
-		assertEquals("[0, 2, 4, 6]", list.getLeftRequesters().toString());
-	}
-
-	@Test
-	public void testCurrentLeaders() {
-		// BiDirectLeaderElection.choice(list, 0, 0);
-		// BiDirectLeaderElection.choice(list, 0, 1);
-		// assertEquals("[0, 2, 4, 6]", list.getCurrentLeaders().toString());
-	}
-
 }

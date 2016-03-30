@@ -64,46 +64,7 @@ public abstract class MyAbstractList {
 		}
 		return arr[i];
 	}
-
-	public void initiateCurrentLeaders() {
-	}
-
-	public void setCorrectLeftSendersIndexes() {
-	}
-
-	public ArrayList<Integer> getLeftSenders() {
-		return null;
-	}
-
-	public void setLeftMsgs() {
-	}
-
-	public void setCorrectRightSendersIndexes() {
-	}
-
-	public ArrayList<Integer> getRightSenders() {
-		return null;
-	}
-
-	public void setRighMsgs() {
-	}
-
-	public Object getRightRequesters() {
-		return null;
-	}
-
-	public Object getLeftRequesters() {
-		return null;
-	}
-
-	public ArrayList<Integer> getCurrentLeaders() {
-		return null;
-	}
-
-	public ArrayList<Integer> getNewLeftSenders() {
-		return null;
-	}
-
+	
 	public boolean hasSolution() {
 		return false;
 	}
@@ -123,16 +84,25 @@ public abstract class MyAbstractList {
 		return s;
 	}
 
-	public void setRequests(int stage) {
-	}
-
-	public void setRequesters() {
-	}
-
-	public void setSenders() {
+	public void initiateCurrentLeaders() {
 	}
 
 	public void initiateSenders() {
+	}
+	
+	public ArrayList<Integer> getLeftSenders() {
+		return null;
+	}
+
+	public ArrayList<Integer> getRightSenders() {
+		return null;
+	}
+
+	public ArrayList<Integer> getCurrentLeaders() {
+		return null;
+	}
+
+	public void setRequests(int stage) {
 	}
 
 	public void send(int stage, int step) {

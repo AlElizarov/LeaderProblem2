@@ -71,16 +71,14 @@ public class MyRingArrayList extends MyAbstractList {
 		return res;
 	}
 	
-	@Override
-	public void setLeftMsgs() {
+	private void setLeftMsgs() {
 		for (int i = 0; i < leftSendersIndexes.size(); i++) {
 			Agent recepient = get(leftSendersIndexes.get(i) + 1);
 			recepient.updateLeftMsgs();
 		}
 	}
 	
-	@Override
-	public void setRighMsgs() {
+	private void setRighMsgs() {
 		for (int i = 0; i < rightSendersIndexes.size(); i++) {
 			get(rightSendersIndexes.get(i) - 1).setRightMsg(
 					get(rightSendersIndexes.get(i) - 1).getNewRightMsg());
@@ -124,8 +122,7 @@ public class MyRingArrayList extends MyAbstractList {
 		resetLeftOk(stage);
 	}
 	
-	@Override
-	public void setRequesters(){
+	private void setRequesters(){
 		setLeftRequesters();
 		setRightRequesters();
 	}
@@ -171,7 +168,7 @@ public class MyRingArrayList extends MyAbstractList {
 	}
 
 	private void sendLeft(int stage, int step) {
-		setCorrectLeftSendersIndexes();
+		leftSendersIndexes = newLeftSendersIndexes;
 		for (int i = 0; i < getLeftSenders().size(); i++) {
 			get(getLeftSenders().get(i) + 1).setNewLeftMsg(
 					get(getLeftSenders().get(i)).getLeftMsg());
@@ -179,15 +176,14 @@ public class MyRingArrayList extends MyAbstractList {
 	}
 
 	private void sendRight(int stage, int step) {
-		setCorrectRightSendersIndexes();
+		rightSendersIndexes = newRightSendersIndexes;
 		for (int i = 0; i < getRightSenders().size(); i++) {
 			get(getRightSenders().get(i) - 1).setNewRightMsg(
 					get(getRightSenders().get(i)).getRightMsg());
 		}
 	}
 
-	@Override
-	public void setSenders(){
+	private void setSenders(){
 		setLeftSenders();
 		setRighSenders();
 	}
@@ -223,36 +219,15 @@ public class MyRingArrayList extends MyAbstractList {
 	}
 
 	@Override
-	public void setCorrectLeftSendersIndexes() {
-		leftSendersIndexes = newLeftSendersIndexes;
-	}
-
-	@Override
 	public ArrayList<Integer> getLeftSenders() {
 		return leftSendersIndexes;
 	}
 
-	@Override
-	public void setCorrectRightSendersIndexes() {
-		rightSendersIndexes = newRightSendersIndexes;
-	}
 
 	@Override
 	public ArrayList<Integer> getRightSenders() {
 		return rightSendersIndexes;
 	}
-
-	@Override
-	public Object getRightRequesters() {
-		return rightRequesters;
-	}
-
-	@Override
-	public Object getLeftRequesters() {
-		return leftRequesters;
-	}
-
-	
 
 	private void resetLeftOk(int stage) {
 		for (int i = 0; i < leftSendersIndexes.size(); i++) {
@@ -264,11 +239,6 @@ public class MyRingArrayList extends MyAbstractList {
 	@Override
 	public ArrayList<Integer> getCurrentLeaders() {
 		return currentLeaders;
-	}
-
-	@Override
-	public ArrayList<Integer> getNewLeftSenders() {
-		return newLeftSendersIndexes;
 	}
 
 	@Override
