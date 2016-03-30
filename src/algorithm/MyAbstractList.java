@@ -66,11 +66,22 @@ public abstract class MyAbstractList {
 	}
 	
 	public boolean hasSolution() {
+		for (int i = 0; i < getCurrentLeaders().size(); i++) {
+			if (get(i).getId() == get(i - 1).getLeftMsg()) {
+				return true;
+			}
+		}
 		return false;
 	}
 
 	public int getLeaderId() {
-		return 0;
+		int leaderId = 0;
+		for (int i = 0; i < size; i++)
+			if (get(i).getId() == get(i - 1).getLeftMsg()) {
+				leaderId = get(i).getId();
+			}
+
+		return leaderId;
 	}
 
 	@Override
