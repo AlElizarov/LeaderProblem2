@@ -68,9 +68,6 @@ public abstract class MyAbstractList {
 	public void initiateCurrentLeaders() {
 	}
 
-	public void initiateLeftSenders() {
-	}
-
 	public void setCorrectLeftSendersIndexes() {
 	}
 
@@ -89,9 +86,6 @@ public abstract class MyAbstractList {
 	}
 
 	public void setRighMsgs() {
-	}
-
-	public void initiateRightSenders() {
 	}
 
 	public Object getRightRequesters() {
@@ -136,6 +130,12 @@ public abstract class MyAbstractList {
 	}
 
 	public void setSenders() {
+	}
+
+	public void initiateSenders() {
+	}
+
+	public void send(int stage, int step) {
 	}
 
 }
