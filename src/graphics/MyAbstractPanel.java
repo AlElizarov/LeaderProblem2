@@ -43,7 +43,7 @@ public class MyAbstractPanel extends JPanel {
 		graphics.setFont(new Font("Veranda", Font.BOLD, msgSize));
 		int lineCenterX = (x1 + x2) / 2;
 		int lineCenterY = (y1 + y2) / 2;
-		graphics.drawString("" + currentBall.getNewMsg(), lineCenterX,
+		graphics.drawString("" + currentBall.getNewLeftMsg(), lineCenterX,
 				lineCenterY);
 	}
 	

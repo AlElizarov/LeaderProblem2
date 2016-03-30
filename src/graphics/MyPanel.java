@@ -44,7 +44,7 @@ public class MyPanel extends MyAbstractPanel {
 		int ballIdx = 0;
 		while (list.hasNext()) {
 			Agent currentBall = list.next();
-			if (currentBall.getMsg() != currentBall.getId()) {
+			if (currentBall.getLeftMsg() != currentBall.getId()) {
 				graphics.setColor(Color.YELLOW);
 			} else {
 				graphics.setColor(Color.red);
@@ -70,7 +70,7 @@ public class MyPanel extends MyAbstractPanel {
 						newCoordY(ballIdx + 1), currentBall);
 			}
 
-			if (taskStep == 1 || currentBall.getMsg() > 0) {
+			if (taskStep == 1 || currentBall.getLeftMsg() > 0) {
 				if (quantity == 2 && ballIdx == 0) {
 					drawMsgs(graphics, newCoordX(ballIdx) + 30,
 							newCoordX(ballIdx + 1) + 30,
