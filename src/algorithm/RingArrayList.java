@@ -1,13 +1,12 @@
 package algorithm;
 
-import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
-public abstract class MyAbstractList {
+public class RingArrayList implements MyListForLeaderElection<Agent>{
 
-	protected int size;
-	protected Agent[] arr = new Agent[1];
-	protected int index = 0;
+	private int size;
+	private Agent[] arr = new Agent[1];
+	private int index = 0;
 
 	public boolean isEmpty() {
 		return size == 0;
@@ -25,7 +24,13 @@ public abstract class MyAbstractList {
 		}
 		arr[size++] = agent;
 	}
-
+	
+	public void addAll(Agent[] data) {
+		for(int i = 0; i < data.length; i++){
+			add(data[i]);
+		}
+	}
+	
 	public Agent next() {
 		if (size == 0) {
 			throw new NoSuchElementException();
@@ -43,17 +48,14 @@ public abstract class MyAbstractList {
 		}
 		return true;
 	}
-
+	
+	@Override
 	public Agent getNextNeiborough() {
 		if (index == size) {
 			return arr[0];
 		}
 		return arr[index];
 	}
-
-	public abstract void setMessages();
-
-	public abstract String printMsgs();
 
 	public Agent get(int i) {
 		while (i >= size) {
@@ -93,30 +95,6 @@ public abstract class MyAbstractList {
 				s += ", ";
 		}
 		return s;
-	}
-
-	public void initiateStartState() {
-	}
-
-	public void initiateSenders() {
-	}
-	
-	public ArrayList<Integer> getLeftSenders() {
-		return null;
-	}
-
-	public ArrayList<Integer> getRightSenders() {
-		return null;
-	}
-
-	public ArrayList<Integer> getCurrentLeaders() {
-		return null;
-	}
-
-	public void setRequests(int stage) {
-	}
-
-	public void send(int stage, int step) {
 	}
 
 }

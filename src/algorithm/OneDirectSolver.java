@@ -1,50 +1,61 @@
 package algorithm;
 
+public class OneDirectSolver {
 
-public class RingList extends MyAbstractList {
+	private MyListForLeaderElection<Agent> list;
+	
+	public OneDirectSolver(MyListForLeaderElection<Agent> list) {
+		this.list = list;
+	}
+	
+	public void solve(int step) {
+		if (step == 0) {
+			initiateStartState();
+		} else {
+			setMessages();
+		}
+	}
 
-	@Override
-	public void setMessages() {
-		Agent next;
-		while (hasNext()) {
-			next = next();
-			if (next.getId() < next.getLeftMsg()) {
-				getNextNeiborough().setNewLeftMsg(next.getLeftMsg());
+	private void setMessages() {
+		Agent current;
+		Agent neiborough;
+		while (list.hasNext()) {
+			current = list.next();
+			neiborough = list.getNextNeiborough();
+			if (current.getId() < current.getLeftMsg()) {
+				neiborough.setNewLeftMsg(current.getLeftMsg());
 			} else {
-				getNextNeiborough().setNewLeftMsg(0);
+				neiborough.setNewLeftMsg(0);
 			}
 		}
-		while (hasNext()) {
-			next = next();
-			next.updateLeftMsgs();
+		while (list.hasNext()) {
+			list.next().updateLeftMsgs();;
 		}
 	}
-	
-	@Override
-	public void initiateStartState(){
-		Agent next;
-		while (hasNext()) {
-			next = next();
-			getNextNeiborough().setLeftMsg(next.getId());
-			getNextNeiborough().setNewLeftMsg(next.getId());
+
+	private void initiateStartState() {
+		Agent current;
+		Agent neiborough;
+		while (list.hasNext()) {
+			current = list.next();
+			neiborough = list.getNextNeiborough();
+			neiborough.setLeftMsg(current.getId());
+			neiborough.setNewLeftMsg(current.getId());
 		}
 	}
-	
-	@Override
+
 	public String printMsgs() {
 		String s = "";
 		Agent next;
-		while (hasNext()) {
-			next = next();
+		while (list.hasNext()) {
+			next = list.next();
 			if (next.getLeftMsg() != 0) {
 				s += "<font color = red>";
 			} else {
 				s += "<font color = balck>";
 			}
 			s += next.getLeftMsg();
-			s += "</font>";
-			if (index < size)
-				s += ", ";
+			s += "</font> ";
 		}
 		return s;
 	}

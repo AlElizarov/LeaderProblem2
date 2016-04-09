@@ -2,7 +2,7 @@ package algorithm;
 
 import java.util.ArrayList;
 
-public class BiRingList extends MyAbstractList {
+public class BiDirectSolver {
 
 	private ArrayList<Integer> rightSendersIndexes = new ArrayList<>();
 	private ArrayList<Integer> newRightSendersIndexes = new ArrayList<>();
@@ -11,111 +11,99 @@ public class BiRingList extends MyAbstractList {
 	private ArrayList<Integer> currentLeaders = new ArrayList<>();
 	private ArrayList<Integer> rightRequesters = new ArrayList<>();
 	private ArrayList<Integer> leftRequesters = new ArrayList<Integer>();
+	private RingArrayList list;
 
-	@Override
-	public void initiateStartState() {
-		for (int i = 0; i < size(); i++) {
+	public BiDirectSolver(RingArrayList list) {
+		this.list = list;
+	}
+
+	public void solve(int stage, int step) {
+		if (stage == 0) {
+			initiateStartState();
+		}
+		if (step == 0) {
+			initiateSenders();
+		}
+		if (step < Math.pow(2, stage)) {
+			send(stage, step);
+		} else {
+			setRequests(stage);
+		}
+	}
+
+	private void initiateStartState() {
+		for (int i = 0; i < list.size(); i++) {
 			currentLeaders.add(i);
 		}
 	}
 
-	@Override
-	public void initiateSenders() {
-		initiateLeftSenders();
-		initiateRightSenders();
-	}
-
-	private void initiateLeftSenders() {
+	private void initiateSenders() {
 		leftSendersIndexes = new ArrayList<>();
 		newLeftSendersIndexes = new ArrayList<>();
-		for (int i = 0; i < currentLeaders.size(); i++) {
-			leftSendersIndexes.add(currentLeaders.get(i));
-			newLeftSendersIndexes.add(currentLeaders.get(i));
-			get(leftSendersIndexes.get(i)).setLeftMsg(
-					get(leftSendersIndexes.get(i)).getId());
-		}
-	}
-
-	private void initiateRightSenders() {
 		rightSendersIndexes = new ArrayList<>();
 		newRightSendersIndexes = new ArrayList<>();
+		Agent node;
+		int leaderIdx = 0;
 		for (int i = 0; i < currentLeaders.size(); i++) {
-			rightSendersIndexes.add(currentLeaders.get(i));
-			newRightSendersIndexes.add(currentLeaders.get(i));
-			get(rightSendersIndexes.get(i)).setRightMsg(
-					get(rightSendersIndexes.get(i)).getId());
+			leaderIdx = currentLeaders.get(i);
+			leftSendersIndexes.add(leaderIdx);
+			newLeftSendersIndexes.add(leaderIdx);
+			node = list.get(leftSendersIndexes.get(i));
+			node.setLeftMsg(node.getId());
+			rightSendersIndexes.add(leaderIdx);
+			newRightSendersIndexes.add(leaderIdx);
+			node = list.get(rightSendersIndexes.get(i));
+			node.setRightMsg(node.getId());
 		}
 	}
 
-	@Override
-	public String printMsgs() {
-		String res = "";
-
-		res += "<i>”злы, отправл€ющие сообщени€ налево:</i> ";
-		for (int i = 0; i < leftSendersIndexes.size(); i++) {
-			res += leftSendersIndexes.get(i) + "  ";
-		}
-		res += "<br><i>—ообщени€ идущие по часовой стрелке:</i> ";
-		for (int i = 0; i < leftSendersIndexes.size(); i++) {
-			res += get(leftSendersIndexes.get(i)).getLeftMsg() + "  ";
-		}
-		res += "<br>";
-		res += "<i>”злы, отправл€ющие сообщени€ направо:</i> ";
-		for (int i = 0; i < rightSendersIndexes.size(); i++) {
-			res += rightSendersIndexes.get(i) + "  ";
-		}
-		res += "<br><i>—ообщени€ идущие против часовой стрелке:</i> ";
-		for (int i = 0; i < rightSendersIndexes.size(); i++) {
-			res += get(rightSendersIndexes.get(i)).getRightMsg() + "  ";
-		}
-		return res;
-	}
-
-	private void setLeftMsgs() {
-		for (int i = 0; i < leftSendersIndexes.size(); i++) {
-			Agent recepient = get(leftSendersIndexes.get(i) + 1);
-			recepient.updateLeftMsgs();
-		}
-	}
-
-	private void setRighMsgs() {
-		for (int i = 0; i < rightSendersIndexes.size(); i++) {
-			get(rightSendersIndexes.get(i) - 1).setRightMsg(
-					get(rightSendersIndexes.get(i) - 1).getNewRightMsg());
-		}
-	}
-
-	@Override
-	public void setMessages() {
+	private void setMessages() {
 		setLeftMsgs();
 		setRighMsgs();
 	}
 
-	@Override
-	public void setRequests(int stage) {
+	private void setLeftMsgs() {
+		Agent leftRecepient;
+		for (int i = 0; i < leftSendersIndexes.size(); i++) {
+			leftRecepient = list.get(leftSendersIndexes.get(i) + 1);
+			leftRecepient.updateLeftMsgs();
+		}
+	}
+
+	private void setRighMsgs() {
+		Agent rightRecepient;
+		for (int i = 0; i < rightSendersIndexes.size(); i++) {
+			rightRecepient = list.get(rightSendersIndexes.get(i) - 1);
+			rightRecepient.updateRighttMsgs();
+		}
+	}
+
+	private void setRequests(int stage) {
 		setLeftRequests(stage);
 		setRightRequests(stage);
 	}
 
 	private void setLeftRequests(int stage) {
+		int requesterIdx = 0;
 		for (int i = 0; i < leftRequesters.size(); i++) {
-			get(leftRequesters.get(i) + (int) Math.pow(2, stage)).setLeftOk(
-					true);
+			requesterIdx = leftRequesters.get(i) + (int) Math.pow(2, stage);
+			list.get(requesterIdx).setLeftOk(true);
 		}
 	}
 
 	private void setRightRequests(int stage) {
 		currentLeaders = new ArrayList<>();
+		int requesterIdx;
+		Agent requester;
 		for (int i = 0; i < rightRequesters.size(); i++) {
-			if (get(rightRequesters.get(i) - (int) Math.pow(2, stage))
-					.isLeftOk()) {
-				if (rightRequesters.get(i) - (int) Math.pow(2, stage) >= 0) {
-					currentLeaders.add(rightRequesters.get(i)
-							- (int) Math.pow(2, stage));
+			requesterIdx = rightRequesters.get(i) - (int) Math.pow(2, stage);
+			requester = list.get(requesterIdx);
+			if (requester.isLeftOk()) {
+				if (requesterIdx >= 0) {
+					currentLeaders.add(requesterIdx);
 
 				} else {
-					currentLeaders.add(rightRequesters.get(i)
-							- (int) Math.pow(2, stage) + size);
+					currentLeaders.add(requesterIdx + list.size());
 				}
 			}
 		}
@@ -129,13 +117,16 @@ public class BiRingList extends MyAbstractList {
 
 	private void setLeftRequesters() {
 		leftRequesters = new ArrayList<>();
+		int rightSenderIdx = 0;
+		Agent rightSender;
 		for (int i = 0; i < rightSendersIndexes.size(); i++) {
-			if (get(rightSendersIndexes.get(i) - 1).getRightMsg() > get(
-					rightSendersIndexes.get(i) - 1).getId()) {
-				if (rightSendersIndexes.get(i) - 1 >= 0) {
-					leftRequesters.add(rightSendersIndexes.get(i) - 1);
+			rightSenderIdx = rightSendersIndexes.get(i) - 1;
+			rightSender = list.get(rightSenderIdx);
+			if (rightSender.getRightMsg() > rightSender.getId()) {
+				if (rightSenderIdx - 1 >= 0) {
+					leftRequesters.add(rightSenderIdx);
 				} else {
-					leftRequesters.add(rightSendersIndexes.get(i) - 1 + size);
+					leftRequesters.add(rightSenderIdx + list.size());
 				}
 			}
 		}
@@ -143,22 +134,24 @@ public class BiRingList extends MyAbstractList {
 
 	private void setRightRequesters() {
 		rightRequesters = new ArrayList<>();
+		int leftSenderIdx = 0;
+		Agent leftSender;
 		for (int i = 0; i < leftSendersIndexes.size(); i++) {
-			if (get(leftSendersIndexes.get(i) + 1).getLeftMsg() > get(
-					leftSendersIndexes.get(i) + 1).getId()) {
-				if (leftSendersIndexes.get(i) + 1 < size) {
-					rightRequesters.add(leftSendersIndexes.get(i) + 1);
+			leftSenderIdx = leftSendersIndexes.get(i) + 1;
+			leftSender = list.get(leftSenderIdx);
+			if (leftSender.getLeftMsg() > leftSender.getId()) {
+				if (leftSenderIdx < list.size()) {
+					rightRequesters.add(leftSenderIdx);
 				} else {
-					rightRequesters.add(leftSendersIndexes.get(i) + 1 - size);
+					rightRequesters.add(leftSenderIdx - list.size());
 				}
 			}
 		}
 	}
 
-	@Override
-	public void send(int stage, int step) {
-		sendLeft(stage, step);
-		sendRight(stage, step);
+	private void send(int stage, int step) {
+		sendLeft();
+		sendRight();
 		setMessages();
 		if ((int) Math.pow(2, stage) - step == 1) {
 			setRequesters();
@@ -167,19 +160,30 @@ public class BiRingList extends MyAbstractList {
 		}
 	}
 
-	private void sendLeft(int stage, int step) {
+	private void sendLeft() {
 		leftSendersIndexes = newLeftSendersIndexes;
-		for (int i = 0; i < getLeftSenders().size(); i++) {
-			get(getLeftSenders().get(i) + 1).setNewLeftMsg(
-					get(getLeftSenders().get(i)).getLeftMsg());
+		Agent rightRecepient;
+		int rightRecepientIdx = 0;
+		Agent leftSender;
+		for (int i = 0; i < leftSendersIndexes.size(); i++) {
+			rightRecepientIdx = leftSendersIndexes.get(i) + 1;
+			rightRecepient = list.get(rightRecepientIdx);
+			leftSender = list.get(rightRecepientIdx - 1);
+			rightRecepient.setNewLeftMsg(leftSender.getLeftMsg());
+			rightRecepient.setLeftMsg(0); // reset left messages
 		}
 	}
 
-	private void sendRight(int stage, int step) {
+	private void sendRight() {
 		rightSendersIndexes = newRightSendersIndexes;
-		for (int i = 0; i < getRightSenders().size(); i++) {
-			get(getRightSenders().get(i) - 1).setNewRightMsg(
-					get(getRightSenders().get(i)).getRightMsg());
+		Agent leftRecepient;
+		int leftRecepientIdx = 0;
+		Agent rightSender;
+		for (int i = 0; i < rightSendersIndexes.size(); i++) {
+			leftRecepientIdx = rightSendersIndexes.get(i) - 1;
+			leftRecepient = list.get(leftRecepientIdx);
+			rightSender = list.get(leftRecepientIdx + 1);
+			leftRecepient.setNewRightMsg(rightSender.getRightMsg());
 		}
 	}
 
@@ -190,14 +194,16 @@ public class BiRingList extends MyAbstractList {
 
 	private void setLeftSenders() {
 		newLeftSendersIndexes = new ArrayList<>();
+		int leftSenderIdx = 0;
+		Agent leftSender;
 		for (int i = 0; i < leftSendersIndexes.size(); i++) {
-			if (get(leftSendersIndexes.get(i) + 1).getId() < get(
-					leftSendersIndexes.get(i) + 1).getLeftMsg()) {
-				if (leftSendersIndexes.get(i) + 1 < size) {
-					newLeftSendersIndexes.add(leftSendersIndexes.get(i) + 1);
+			leftSenderIdx = leftSendersIndexes.get(i) + 1;
+			leftSender = list.get(leftSenderIdx);
+			if (leftSender.getId() < leftSender.getLeftMsg()) {
+				if (leftSendersIndexes.get(i) + 1 < list.size()) {
+					newLeftSendersIndexes.add(leftSenderIdx);
 				} else {
-					newLeftSendersIndexes.add(leftSendersIndexes.get(i) + 1
-							- size);
+					newLeftSendersIndexes.add(leftSenderIdx - list.size());
 				}
 			}
 		}
@@ -205,39 +211,62 @@ public class BiRingList extends MyAbstractList {
 
 	private void setRighSenders() {
 		newRightSendersIndexes = new ArrayList<>();
+		int rightSenderIdx = 0;
+		Agent rightSender;
 		for (int i = 0; i < rightSendersIndexes.size(); i++) {
-			if (get(rightSendersIndexes.get(i) - 1).getId() < get(
-					rightSendersIndexes.get(i) - 1).getRightMsg()) {
+			rightSenderIdx = rightSendersIndexes.get(i) - 1;
+			rightSender = list.get(rightSenderIdx);
+			if (rightSender.getId() < rightSender.getRightMsg()) {
 				if ((rightSendersIndexes.get(i) - 1) >= 0) {
-					newRightSendersIndexes.add(rightSendersIndexes.get(i) - 1);
+					newRightSendersIndexes.add(rightSenderIdx);
 				} else {
-					newRightSendersIndexes.add(rightSendersIndexes.get(i) - 1
-							+ size);
+					newRightSendersIndexes.add(rightSenderIdx + list.size());
 				}
 			}
 		}
 	}
 
-	@Override
+	private void resetLeftOk(int stage) {
+		int idx = 0;
+		for (int i = 0; i < leftSendersIndexes.size(); i++) {
+			idx = leftSendersIndexes.get(i) + (int) Math.pow(2, stage);
+			list.get(idx).setLeftOk(false);
+		}
+	}
+
 	public ArrayList<Integer> getLeftSenders() {
 		return leftSendersIndexes;
 	}
 
-	@Override
 	public ArrayList<Integer> getRightSenders() {
 		return rightSendersIndexes;
 	}
 
-	private void resetLeftOk(int stage) {
-		for (int i = 0; i < leftSendersIndexes.size(); i++) {
-			get(leftSendersIndexes.get(i) + (int) Math.pow(2, stage))
-					.setLeftOk(false);
-		}
-	}
-
-	@Override
 	public ArrayList<Integer> getCurrentLeaders() {
 		return currentLeaders;
+	}
+
+	public String printMsgs() {
+		String result = "";
+
+		result += "<i>”злы, отправл€ющие сообщени€ налево:</i> ";
+		for (int i = 0; i < leftSendersIndexes.size(); i++) {
+			result += leftSendersIndexes.get(i) + "  ";
+		}
+		result += "<br><i>—ообщени€ идущие по часовой стрелке:</i> ";
+		for (int i = 0; i < leftSendersIndexes.size(); i++) {
+			result += list.get(leftSendersIndexes.get(i)).getLeftMsg() + "  ";
+		}
+		result += "<br>";
+		result += "<i>”злы, отправл€ющие сообщени€ направо:</i> ";
+		for (int i = 0; i < rightSendersIndexes.size(); i++) {
+			result += rightSendersIndexes.get(i) + "  ";
+		}
+		result += "<br><i>—ообщени€ идущие против часовой стрелке:</i> ";
+		for (int i = 0; i < rightSendersIndexes.size(); i++) {
+			result += list.get(rightSendersIndexes.get(i)).getRightMsg() + "  ";
+		}
+		return result;
 	}
 
 }
