@@ -8,15 +8,15 @@ import org.junit.Test;
 
 import algorithm.Agent;
 import algorithm.MyAbstractList;
-import algorithm.MyRingArrayList;
+import algorithm.BiRingList;
 
-public class TestMyArrayList {
+public class TestBiRingList {
 
 	private MyAbstractList list;
 
 	@Before
 	public void setUp() {
-		list = new MyRingArrayList();
+		list = new BiRingList();
 		list.add(new Agent(3));
 		list.add(new Agent(7));
 		list.add(new Agent(2));

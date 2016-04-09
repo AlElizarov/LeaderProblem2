@@ -1,7 +1,7 @@
 package algorithm;
 
 
-public class MyRingList extends MyAbstractList {
+public class RingList extends MyAbstractList {
 
 	@Override
 	public void setMessages() {

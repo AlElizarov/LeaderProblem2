@@ -6,7 +6,7 @@ import java.awt.Graphics;
 
 import algorithm.Agent;
 
-public class MyPanel extends MyAbstractPanel {
+public class OneDirectPanel extends MyAbstractPanel {
 
 	/**
 	 * 

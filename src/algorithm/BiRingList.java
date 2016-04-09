@@ -2,7 +2,7 @@ package algorithm;
 
 import java.util.ArrayList;
 
-public class MyRingArrayList extends MyAbstractList {
+public class BiRingList extends MyAbstractList {
 
 	private ArrayList<Integer> rightSendersIndexes = new ArrayList<>();
 	private ArrayList<Integer> newRightSendersIndexes = new ArrayList<>();

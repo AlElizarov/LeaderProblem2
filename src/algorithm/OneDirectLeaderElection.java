@@ -1,6 +1,6 @@
 package algorithm;
 
-public class LeaderElection {
+public class OneDirectLeaderElection {
 
 	public static void solve(MyAbstractList list, int i) {
 		if (i == 0) {

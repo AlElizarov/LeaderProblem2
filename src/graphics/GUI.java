@@ -39,10 +39,10 @@ import javax.swing.border.TitledBorder;
 import net.miginfocom.swing.MigLayout;
 import algorithm.Agent;
 import algorithm.BiDirectLeaderElection;
-import algorithm.LeaderElection;
+import algorithm.OneDirectLeaderElection;
 import algorithm.MyAbstractList;
-import algorithm.MyRingArrayList;
-import algorithm.MyRingList;
+import algorithm.BiRingList;
+import algorithm.RingList;
 
 public class GUI {
 
@@ -145,9 +145,9 @@ public class GUI {
 	private void setData() {
 		ArrayList<Integer> items = new ArrayList<>();
 		if (!isBidirect) {
-			list = new MyRingList();
+			list = new RingList();
 		} else {
-			list = new MyRingArrayList();
+			list = new BiRingList();
 		}
 		for (int i = 0; i < quantity; i++) {
 			items.add(i + 1);
@@ -316,9 +316,9 @@ public class GUI {
 				if (hand.isSelected()) {
 
 					if (!isBidirect) {
-						list = new MyRingList();
+						list = new RingList();
 					} else {
-						list = new MyRingArrayList();
+						list = new BiRingList();
 					}
 					String[] items = textAreaForList.getText().split(",");
 					LinkedHashSet<Integer> intItems = new LinkedHashSet<>();
@@ -375,9 +375,9 @@ public class GUI {
 				}
 
 				if (!isBidirect) {
-					panelWithPicture = new MyPanel();
+					panelWithPicture = new OneDirectPanel();
 				} else {
-					panelWithPicture = new MyBiDirectPanel();
+					panelWithPicture = new BiDirectPanel();
 				}
 				ActionListener[] listeners = stepButtop
 						.getListeners(ActionListener.class);
@@ -440,7 +440,7 @@ public class GUI {
 		protected T doInBackground() throws Exception {
 			while (taskStep != quantity) {
 				Thread.sleep(2000);
-				LeaderElection.solve(list, taskStep++);
+				OneDirectLeaderElection.solve(list, taskStep++);
 				publish();
 			}
 			taskStep = 0;
@@ -488,7 +488,7 @@ public class GUI {
 				textModeString.append("<b>Получение сообщений:</b><br>");
 				textAreaForTextMode.setText(textModeString.toString());
 			}
-			LeaderElection.solve(list, taskStep++);
+			OneDirectLeaderElection.solve(list, taskStep++);
 			textModeString.append("<b>Шаг " + taskStep + ":</b> "
 					+ list.printMsgs() + "<br>");
 			textAreaForTextMode.setText(textModeString.toString());

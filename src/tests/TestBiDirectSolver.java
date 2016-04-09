@@ -8,9 +8,9 @@ import org.junit.Test;
 import algorithm.Agent;
 import algorithm.BiDirectLeaderElection;
 import algorithm.MyAbstractList;
-import algorithm.MyRingArrayList;
+import algorithm.BiRingList;
 
-public class TestBiDirecrSolver {
+public class TestBiDirectSolver {
 
 	private MyAbstractList list;
 	private int stage;
@@ -18,7 +18,7 @@ public class TestBiDirecrSolver {
 
 	@Before
 	public void setUp() {
-		list = new MyRingArrayList();
+		list = new BiRingList();
 		stage = 0;
 		step = 0;
 	}

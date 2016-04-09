@@ -6,17 +6,17 @@ import org.junit.Before;
 import org.junit.Test;
 
 import algorithm.Agent;
-import algorithm.LeaderElection;
+import algorithm.OneDirectLeaderElection;
 import algorithm.MyAbstractList;
-import algorithm.MyRingList;
+import algorithm.RingList;
 
-public class TestLeaderElection {
+public class TestOneDirectSolver {
 	
 	private MyAbstractList list;
 	
 	@Before
 	public void setUp(){
-		list = new MyRingList();
+		list = new RingList();
 	}
 	
 	@Test
@@ -32,7 +32,7 @@ public class TestLeaderElection {
 		
 		int i = 0;
 		while(!list.hasSolution()){
-			LeaderElection.solve(list, i++);
+			OneDirectLeaderElection.solve(list, i++);
 		}
 		
 		int leaderId = list.getLeaderId();
@@ -51,7 +51,7 @@ public class TestLeaderElection {
 		
 		int i = 0;
 		while(!list.hasSolution()){
-			LeaderElection.solve(list, i++);
+			OneDirectLeaderElection.solve(list, i++);
 		}
 		
 		int leaderId = list.getLeaderId();
@@ -64,7 +64,7 @@ public class TestLeaderElection {
 		
 		int i = 0;
 		while(!list.hasSolution()){
-			LeaderElection.solve(list, i++);
+			OneDirectLeaderElection.solve(list, i++);
 		}
 		
 		int leaderId = list.getLeaderId();
@@ -78,7 +78,7 @@ public class TestLeaderElection {
 		
 		int i = 0;
 		while(!list.hasSolution()){
-			LeaderElection.solve(list, i++);
+			OneDirectLeaderElection.solve(list, i++);
 		}
 		
 		int leaderId = list.getLeaderId();
@@ -96,7 +96,7 @@ public class TestLeaderElection {
 		
 		int i = 0;
 		while(!list.hasSolution()){
-			LeaderElection.solve(list, i++);
+			OneDirectLeaderElection.solve(list, i++);
 		}
 		
 		int leaderId = list.getLeaderId();
@@ -113,7 +113,7 @@ public class TestLeaderElection {
 		
 		int i = 0;
 		while(!list.hasSolution()){
-			LeaderElection.solve(list, i++);
+			OneDirectLeaderElection.solve(list, i++);
 		}
 		
 		int leaderId = list.getLeaderId();
@@ -128,7 +128,7 @@ public class TestLeaderElection {
 		
 		int i = 0;
 		while(!list.hasSolution()){
-			LeaderElection.solve(list, i++);
+			OneDirectLeaderElection.solve(list, i++);
 		}
 		
 		int leaderId = list.getLeaderId();
@@ -144,7 +144,7 @@ public class TestLeaderElection {
 		
 		int i = 0;
 		while(!list.hasSolution()){
-			LeaderElection.solve(list, i++);
+			OneDirectLeaderElection.solve(list, i++);
 		}
 		
 		int leaderId = list.getLeaderId();
