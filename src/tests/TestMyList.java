@@ -23,11 +23,16 @@ public class TestMyList {
 
 	@Test
 	public void testIsEmpty() {
-		assertTrue(!list.isEmpty());
+		boolean res = false;
+		boolean actual = list.isEmpty();
+		assertEquals(res, actual);
 	}
 	
 	@Test
 	public void testAdditionAndSize() {
+		int expectedSize = 3;
+		int actualSize = list.size();
+		assertEquals(expectedSize, actualSize);
 		assertEquals(3, list.size());
 	}
 	
@@ -65,6 +70,20 @@ public class TestMyList {
 		list.setMessages();
 		String res = list.printMsgs();
 		assertEquals("<font color = balck>0</font>, <font color = balck>0</font>, <font color = balck>0</font>", res);
+	}
+	
+	@Test 
+	public void testGet(){
+		Agent agent = list.get(1);
+		assertEquals(7, agent.getId());
+		agent = list.get(11);
+		assertEquals(9, agent.getId());
+	}
+	
+	@Test
+	public void testInitiateStartState(){
+		list.initiateStartState();
+		assertEquals("<font color = red>9</font>, <font color = red>8</font>, <font color = red>7</font>", list.printMsgs());
 	}
 
 }

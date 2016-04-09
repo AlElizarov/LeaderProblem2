@@ -25,31 +25,27 @@ public class TestMyArrayList {
 		list.add(new Agent(8));
 		list.add(new Agent(4));
 		list.add(new Agent(6));
+		list.initiateStartState();
 	}
 
 	@Test
 	public void testSetAndPrintMsgs() {
-		list.setMessages();
+		list.initiateSenders();
+		list.send(0, 0);
 		String res = list.printMsgs();
 		assertEquals(
-				"<i>”злы, отправл€ющие сообщени€ налево:</i> <br><i>—ообщени€ идущие по часовой стрелке:"
-				+ "</i> <br><i>”злы, отправл€ющие сообщени€ направо:"
-				+ "</i> <br><i>—ообщени€ идущие против часовой стрелке:</i> ",
+				"<i>”злы, отправл€ющие сообщени€ налево:"
+				+ "</i> 0  1  2  3  4  5  6  7  <br><i>—ообщени€ идущие по часовой стрелке:"
+				+ "</i> 6  3  7  2  5  1  8  4  <br><i>”злы, отправл€ющие сообщени€ направо:"
+				+ "</i> 0  1  2  3  4  5  6  7  <br><i>—ообщени€ идущие против часовой стрелке:"
+				+ "</i> 7  2  5  1  8  4  6  3  ",
 				res);
 	}
-	
-	@Test 
-	public void testGet(){
-		Agent agent = list.get(1);
-		assertEquals(7, agent.getId());
-		agent = list.get(11);
-		assertEquals(5, agent.getId());
-	}
-	
+
 	@Test
-	public void testInitiateCurrentLeaders(){
-		list.initiateCurrentLeaders();
-		assertArrayEquals(new Object[] {0, 1, 2, 3, 4, 5, 6, 7}, list.getCurrentLeaders().toArray());
+	public void testInitiateCurrentLeaders() {
+		assertArrayEquals(new Object[] { 0, 1, 2, 3, 4, 5, 6, 7 }, list
+				.getCurrentLeaders().toArray());
 	}
 
 }
