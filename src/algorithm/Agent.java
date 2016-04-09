@@ -1,7 +1,7 @@
 package algorithm;
 
 public class Agent {
-	
+
 	private int id;
 	private int leftMsg;
 	private int rightMsg;
@@ -51,8 +51,6 @@ public class Agent {
 
 	public Agent(int id) {
 		this.id = id;
-//		leftMsg = id;
-//		rightMsg = id;
 	}
 
 	public int getId() {
@@ -60,7 +58,11 @@ public class Agent {
 	}
 
 	public void updateLeftMsgs() {
-		setLeftMsg(getNewLeftMsg());
+		leftMsg = newLeftMsg;
+	}
+
+	public void updateRighttMsgs() {
+		rightMsg = newRightMsg;
 	}
 
 }
