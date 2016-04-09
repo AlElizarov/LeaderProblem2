@@ -51,8 +51,8 @@ public class Agent {
 
 	public Agent(int id) {
 		this.id = id;
-		leftMsg = id;
-		rightMsg = id;
+//		leftMsg = id;
+//		rightMsg = id;
 	}
 
 	public int getId() {
