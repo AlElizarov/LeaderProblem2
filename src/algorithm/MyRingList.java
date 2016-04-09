@@ -3,6 +3,7 @@ package algorithm;
 
 public class MyRingList extends MyAbstractList {
 
+	@Override
 	public void setMessages() {
 		Agent next;
 		while (hasNext()) {
@@ -18,7 +19,18 @@ public class MyRingList extends MyAbstractList {
 			next.updateLeftMsgs();
 		}
 	}
-
+	
+	@Override
+	public void initiateStartState(){
+		Agent next;
+		while (hasNext()) {
+			next = next();
+			getNextNeiborough().setLeftMsg(next.getId());
+			getNextNeiborough().setNewLeftMsg(next.getId());
+		}
+	}
+	
+	@Override
 	public String printMsgs() {
 		String s = "";
 		Agent next;
