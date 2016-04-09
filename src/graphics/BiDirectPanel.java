@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 
 import algorithm.Agent;
+import algorithm.BiDirectSolver;
 
 public class BiDirectPanel extends MyAbstractPanel {
 
@@ -17,6 +18,7 @@ public class BiDirectPanel extends MyAbstractPanel {
 	private boolean nextStepGetLeader;
 	private int stepBeforeLeader;
 	private int leaderPos = -1;
+	private  BiDirectSolver solver;
 
 	public void paintComponent(Graphics graphics) {
 		xLeaderPos = roundCenterX;
@@ -95,7 +97,7 @@ public class BiDirectPanel extends MyAbstractPanel {
 						newCoordY(ballIdx + 1), currentBall);
 
 			}
-			if (list.getCurrentLeaders().contains(ballIdx)) {
+			if (solver.getCurrentLeaders().contains(ballIdx)) {
 
 				graphics.setColor(Color.BLUE);
 
@@ -146,7 +148,7 @@ public class BiDirectPanel extends MyAbstractPanel {
 				graphics.setFont(new Font("Veranda", Font.BOLD, msgSize));
 				graphics.drawString("CURRENT LEADERS", xLeaderPos - 30,
 						yLeaderPos);
-				if (list.getCurrentLeaders().contains(ballIdx)) {
+				if (solver.getCurrentLeaders().contains(ballIdx)) {
 					drawArrow(graphics, xLeaderPos, yLeaderPos,
 							newCoordX(ballIdx + 1), newCoordY(ballIdx + 1),
 							true);
@@ -156,7 +158,7 @@ public class BiDirectPanel extends MyAbstractPanel {
 				continue;
 			}
 
-			if (list.getLeftSenders().contains(ballIdx)) {
+			if (solver.getLeftSenders().contains(ballIdx)) {
 				if (biDirectStep != 0 || stage != 0) {
 					if (stage == 0) {
 						if (quantity != 2) {
@@ -185,7 +187,7 @@ public class BiDirectPanel extends MyAbstractPanel {
 				}
 			}
 
-			if (list.getRightSenders().contains(ballIdx)) {
+			if (solver.getRightSenders().contains(ballIdx)) {
 				if (biDirectStep != 0 || stage != 0) {
 					if (stage == 0) {
 						if (quantity != 2) {

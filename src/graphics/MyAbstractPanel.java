@@ -9,7 +9,7 @@ import java.awt.geom.AffineTransform;
 import javax.swing.JPanel;
 
 import algorithm.Agent;
-import algorithm.MyAbstractList;
+import algorithm.RingArrayList;
 
 public class MyAbstractPanel extends JPanel {
 
@@ -23,7 +23,7 @@ public class MyAbstractPanel extends JPanel {
 	protected int ARR_SIZE;
 	protected int msgSize;
 	private int ballSize;
-	protected MyAbstractList list;
+	protected RingArrayList list;
 	protected int taskStep;
 	protected int stage;
 	protected int biDirectStep;
@@ -145,7 +145,7 @@ public class MyAbstractPanel extends JPanel {
 		ballSize = ball_size;
 	}
 
-	public void setList(MyAbstractList list2) {
+	public void setList(RingArrayList list2) {
 		this.list = list2;
 	}
 
