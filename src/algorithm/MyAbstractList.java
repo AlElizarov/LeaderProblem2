@@ -66,8 +66,8 @@ public abstract class MyAbstractList {
 	}
 	
 	public boolean hasSolution() {
-		for (int i = 0; i < getCurrentLeaders().size(); i++) {
-			if (get(i).getId() == get(i - 1).getLeftMsg()) {
+		for (int i = 0; i < size; i++) {
+			if (get(i).getId() == get(i).getLeftMsg()) {
 				return true;
 			}
 		}
@@ -77,7 +77,7 @@ public abstract class MyAbstractList {
 	public int getLeaderId() {
 		int leaderId = 0;
 		for (int i = 0; i < size; i++)
-			if (get(i).getId() == get(i - 1).getLeftMsg()) {
+			if (get(i).getId() == get(i).getLeftMsg()) {
 				leaderId = get(i).getId();
 			}
 
@@ -95,7 +95,7 @@ public abstract class MyAbstractList {
 		return s;
 	}
 
-	public void initiateCurrentLeaders() {
+	public void initiateStartState() {
 	}
 
 	public void initiateSenders() {
