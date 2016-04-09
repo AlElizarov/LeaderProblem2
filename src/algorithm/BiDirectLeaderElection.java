@@ -5,7 +5,7 @@ public class BiDirectLeaderElection {
 
 	public static void choice(MyAbstractList list, int stage, int step) {
 		if (stage == 0) {
-			list.initiateCurrentLeaders();
+			list.initiateStartState();
 		}
 		if (step == 0) {
 			list.initiateSenders();
