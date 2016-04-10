@@ -1,7 +1,6 @@
 package tests;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -9,19 +8,32 @@ import org.junit.Test;
 import algorithm.Agent;
 import algorithm.BiDirectSolver;
 import algorithm.RingArrayList;
+import algorithm.Solver;
 
 public class TestBiDirectSolver {
 
-	private RingArrayList list;
-	private int stage;
-	private int step;
 	private BiDirectSolver solver;
 
 	@Before
 	public void setUp() {
-		list = new RingArrayList();
-		stage = 0;
-		step = 0;
+		solver = new BiDirectSolver();
+	}
+	
+	@Test
+	public void testHasSolution(){
+		solver.add(3);
+		solver.solve();
+		boolean isSoluted = solver.hasSolution();
+		assertTrue(isSoluted);
+	}
+	
+	@Test
+	public void testGetLeaderId(){
+		solver.add(3);
+		solver.solve();
+		int expect = 3;
+		int leaderId = solver.getLeaderId();
+		assertEquals(expect, leaderId);
 	}
 
 	@Test
@@ -29,41 +41,37 @@ public class TestBiDirectSolver {
 		Agent[] data = { new Agent(3), new Agent(7), new Agent(2),
 				new Agent(5), new Agent(1), new Agent(8), new Agent(4),
 				new Agent(6) };
-		list.addAll(data);
-		solver = new BiDirectSolver(list);
+		solver.addAll(data);
 		solve();
-		int leaderId = list.getLeaderId();
-		assertEquals("stage: " + stage + "step: " + step, 8, leaderId);
+		int leaderId = solver.getLeaderId();
+		assertEquals(8, leaderId);
 	}
 
 	@Test
 	public void testOneDirectModeSimpleCaseOdd() {
 		Agent[] data = { new Agent(3), new Agent(7), new Agent(2),
 				new Agent(5), new Agent(1), new Agent(4), new Agent(6) };
-		list.addAll(data);
-		solver = new BiDirectSolver(list);
+		solver.addAll(data);
 		solve();
-		int leaderId = list.getLeaderId();
+		int leaderId = solver.getLeaderId();
 		assertEquals(7, leaderId);
 	}
 
 	@Test
 	public void testOneDirectModeOneVariable() {
 		Agent[] data = { new Agent(3) };
-		list.addAll(data);
-		solver = new BiDirectSolver(list);
+		solver.addAll(data);
 		solve();
-		int leaderId = list.getLeaderId();
+		int leaderId = solver.getLeaderId();
 		assertEquals(3, leaderId);
 	}
 
 	@Test
 	public void testOneDirectModeTwoVariables() {
 		Agent[] data = { new Agent(3), new Agent(2) };
-		list.addAll(data);
-		solver = new BiDirectSolver(list);
+		solver.addAll(data);
 		solve();
-		int leaderId = list.getLeaderId();
+		int leaderId = solver.getLeaderId();
 		assertEquals(3, leaderId);
 	}
 
@@ -71,10 +79,9 @@ public class TestBiDirectSolver {
 	public void testOneDirectModeBestCaseEven() {
 		Agent[] data = { new Agent(6), new Agent(1), new Agent(2),
 				new Agent(3), new Agent(4), new Agent(5) };
-		list.addAll(data);
-		solver = new BiDirectSolver(list);
+		solver.addAll(data);
 		solve();
-		int leaderId = list.getLeaderId();
+		int leaderId = solver.getLeaderId();
 		assertEquals(6, leaderId);
 	}
 
@@ -82,30 +89,27 @@ public class TestBiDirectSolver {
 	public void testOneDirectModeBestCaseOdd() {
 		Agent[] data = { new Agent(5), new Agent(1), new Agent(2),
 				new Agent(3), new Agent(4) };
-		list.addAll(data);
-		solver = new BiDirectSolver(list);
+		solver.addAll(data);
 		solve();
-		int leaderId = list.getLeaderId();
+		int leaderId = solver.getLeaderId();
 		assertEquals(5, leaderId);
 	}
 
 	@Test
 	public void testOneDirectModeWorstCaseOdd() {
 		Agent[] data = { new Agent(3), new Agent(1), new Agent(2) };
-		list.addAll(data);
-		solver = new BiDirectSolver(list);
+		solver.addAll(data);
 		solve();
-		int leaderId = list.getLeaderId();
+		int leaderId = solver.getLeaderId();
 		assertEquals(3, leaderId);
 	}
 
 	@Test
 	public void testOneDirectModeWorstCaseEven() {
 		Agent[] data = { new Agent(4), new Agent(3), new Agent(2), new Agent(1) };
-		list.addAll(data);
-		solver = new BiDirectSolver(list);
+		solver.addAll(data);
 		solve();
-		int leaderId = list.getLeaderId();
+		int leaderId = solver.getLeaderId();
 		assertEquals(4, leaderId);
 	}
 
@@ -114,8 +118,7 @@ public class TestBiDirectSolver {
 		Agent[] data = { new Agent(3), new Agent(7), new Agent(2),
 				new Agent(5), new Agent(1), new Agent(8), new Agent(4),
 				new Agent(6) };
-		list.addAll(data);
-		solver = new BiDirectSolver(list);
+		solver.addAll(data);
 		solve();
 		String expect = "<i>”злы, отправл€ющие сообщени€ налево:</i> 4  "
 				+ "<br><i>—ообщени€ идущие по часовой стрелке:</i> 0  "
@@ -127,26 +130,17 @@ public class TestBiDirectSolver {
 
 	@Test
 	public void testInitiateCurrentLeaders() {
-		Agent[] data = { new Agent(3), new Agent(7), new Agent(2),
-				new Agent(5), new Agent(1), new Agent(8), new Agent(4),
-				new Agent(6) };
-		list.addAll(data);
-		solver = new BiDirectSolver(list);
-		Object[] expect = { 5};
+		int[] data = { 3, 7, 2, 5, 1, 8, 4, 6 };
+		solver.addAll(data);
+		Object[] expect = { 5 };
 		solve();
 		Object[] actualLeadres = solver.getCurrentLeaders().toArray();
 		assertArrayEquals(expect, actualLeadres);
 	}
 
 	private void solve() {
-		while (!list.hasSolution()) {
-			solver.solve(stage, step);
-			if (step == Math.pow(2, stage)) {
-				stage++;
-				step = 0;
-			} else {
-				step++;
-			}
+		while (!solver.hasSolution()) {
+			solver.solve();
 		}
 	}
 

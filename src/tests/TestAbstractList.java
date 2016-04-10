@@ -43,6 +43,24 @@ public class TestAbstractList {
 		int actualSize = list.size();
 		assertEquals(expectedSize, actualSize);
 	}
+	
+	@Test
+	public void testAddAllIntegers() {
+		int[] data = { 10, 11, 12 };
+		list.addAll(data);
+		int expectedSize = 6;
+		int actualSize = list.size();
+		assertEquals(expectedSize, actualSize);
+	}
+	
+	@Test
+	public void testAddAllStrings() {
+		String[] data = { "10", "11", "12" };
+		list.addAll(data);
+		int expectedSize = 6;
+		int actualSize = list.size();
+		assertEquals(expectedSize, actualSize);
+	}
 
 	@Test
 	public void testPrint() {
