@@ -66,25 +66,6 @@ public class RingArrayList implements MyListForLeaderElection<Agent>{
 		}
 		return arr[i];
 	}
-	
-	public boolean hasSolution() {
-		for (int i = 0; i < size; i++) {
-			if (get(i).getId() == get(i).getLeftMsg()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public int getLeaderId() {
-		int leaderId = 0;
-		for (int i = 0; i < size; i++)
-			if (get(i).getId() == get(i).getLeftMsg()) {
-				leaderId = get(i).getId();
-			}
-
-		return leaderId;
-	}
 
 	@Override
 	public String toString() {
@@ -95,6 +76,30 @@ public class RingArrayList implements MyListForLeaderElection<Agent>{
 				s += ", ";
 		}
 		return s;
+	}
+
+	@Override
+	public void add(int item) {
+		add(new Agent(item));
+	}
+
+	@Override
+	public void add(String item) {
+		add(Integer.parseInt(item));
+	}
+
+	@Override
+	public void addAll(int[] data) {
+		for(int i = 0; i < data.length; i++){
+			add(data[i]);
+		}
+	}
+
+	@Override
+	public void addAll(String[] data) {
+		for(int i = 0; i < data.length; i++){
+			add(data[i]);
+		}
 	}
 
 }
