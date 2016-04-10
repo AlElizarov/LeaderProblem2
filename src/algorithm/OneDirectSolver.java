@@ -1,19 +1,16 @@
 package algorithm;
 
-public class OneDirectSolver {
+public class OneDirectSolver extends Solver{
+	
+	private int step;
 
-	private MyListForLeaderElection<Agent> list;
-	
-	public OneDirectSolver(MyListForLeaderElection<Agent> list) {
-		this.list = list;
-	}
-	
-	public void solve(int step) {
+	public void solve() {
 		if (step == 0) {
 			initiateStartState();
 		} else {
 			setMessages();
 		}
+		step++;
 	}
 
 	private void setMessages() {

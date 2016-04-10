@@ -2,8 +2,10 @@ package algorithm;
 
 import java.util.ArrayList;
 
-public class BiDirectSolver {
+public class BiDirectSolver extends Solver{
 
+	private int stage =0 ;
+	private int step = 0;
 	private ArrayList<Integer> rightSendersIndexes = new ArrayList<>();
 	private ArrayList<Integer> newRightSendersIndexes = new ArrayList<>();
 	private ArrayList<Integer> leftSendersIndexes = new ArrayList<>();
@@ -11,23 +13,25 @@ public class BiDirectSolver {
 	private ArrayList<Integer> currentLeaders = new ArrayList<>();
 	private ArrayList<Integer> rightRequesters = new ArrayList<>();
 	private ArrayList<Integer> leftRequesters = new ArrayList<Integer>();
-	private RingArrayList list;
 
-	public BiDirectSolver(RingArrayList list) {
-		this.list = list;
-	}
-
-	public void solve(int stage, int step) {
-		if (stage == 0) {
+	public void solve() {
+		if (stage == 0 	&& step == 0) {
 			initiateStartState();
 		}
 		if (step == 0) {
 			initiateSenders();
 		}
 		if (step < Math.pow(2, stage)) {
-			send(stage, step);
+			send();
 		} else {
-			setRequests(stage);
+			setRequests();
+		}
+		
+		if (step == Math.pow(2, stage)) {
+			stage++;
+			step = 0;
+		} else {
+			step++;
 		}
 	}
 
@@ -78,12 +82,12 @@ public class BiDirectSolver {
 		}
 	}
 
-	private void setRequests(int stage) {
-		setLeftRequests(stage);
-		setRightRequests(stage);
+	private void setRequests() {
+		setLeftRequests();
+		setRightRequests();
 	}
 
-	private void setLeftRequests(int stage) {
+	private void setLeftRequests() {
 		int requesterIdx = 0;
 		for (int i = 0; i < leftRequesters.size(); i++) {
 			requesterIdx = leftRequesters.get(i) + (int) Math.pow(2, stage);
@@ -91,7 +95,7 @@ public class BiDirectSolver {
 		}
 	}
 
-	private void setRightRequests(int stage) {
+	private void setRightRequests() {
 		currentLeaders = new ArrayList<>();
 		int requesterIdx;
 		Agent requester;
@@ -107,7 +111,7 @@ public class BiDirectSolver {
 				}
 			}
 		}
-		resetLeftOk(stage);
+		resetLeftOk();
 	}
 
 	private void setRequesters() {
@@ -149,7 +153,7 @@ public class BiDirectSolver {
 		}
 	}
 
-	private void send(int stage, int step) {
+	private void send() {
 		sendLeft();
 		sendRight();
 		setMessages();
@@ -170,7 +174,7 @@ public class BiDirectSolver {
 			rightRecepient = list.get(rightRecepientIdx);
 			leftSender = list.get(rightRecepientIdx - 1);
 			rightRecepient.setNewLeftMsg(leftSender.getLeftMsg());
-			rightRecepient.setLeftMsg(0); // reset left messages
+			leftSender.setLeftMsg(0); // reset left messages
 		}
 	}
 
@@ -200,7 +204,7 @@ public class BiDirectSolver {
 			leftSenderIdx = leftSendersIndexes.get(i) + 1;
 			leftSender = list.get(leftSenderIdx);
 			if (leftSender.getId() < leftSender.getLeftMsg()) {
-				if (leftSendersIndexes.get(i) + 1 < list.size()) {
+				if (leftSenderIdx < list.size()) {
 					newLeftSendersIndexes.add(leftSenderIdx);
 				} else {
 					newLeftSendersIndexes.add(leftSenderIdx - list.size());
@@ -226,7 +230,7 @@ public class BiDirectSolver {
 		}
 	}
 
-	private void resetLeftOk(int stage) {
+	private void resetLeftOk() {
 		int idx = 0;
 		for (int i = 0; i < leftSendersIndexes.size(); i++) {
 			idx = leftSendersIndexes.get(i) + (int) Math.pow(2, stage);
