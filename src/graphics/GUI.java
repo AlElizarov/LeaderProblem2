@@ -105,6 +105,7 @@ public class GUI {
 				frame.revalidate();
 				frame.repaint();
 				panelWithPicture.repaint();
+				panelWithPicture.revalidate();
 			}
 		});
 	}
@@ -335,12 +336,11 @@ public class GUI {
 	}
 
 	private class SetupButtonListener implements ActionListener {
-		
+
 		private int quantity;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			ISolver solver = setMode();
 			try {
 				quantity = Integer.valueOf(quantityField.getText());
 				if (quantity <= 0) {
@@ -352,15 +352,16 @@ public class GUI {
 				handleErrors(exc);
 				return;
 			}
+			ISolver solver = setMode();
 
 			if (hand.isSelected()) {
-				if(!fillSolverHandlessOk(solver)){
+				if (!fillSolverHandlessOk(solver)) {
 					return;
 				}
 			} else {
 				solver.setRandomData(quantity);
 			}
-			
+
 			addListeners();
 			rightSplit.setTopComponent(panelWithPicture);
 			establishTextmodeArea(solver);
@@ -428,21 +429,19 @@ public class GUI {
 			} else {
 				solver = creteBiDirectMode();
 			}
+			progress = new AbstractSolutionProgress<>(solver, GUI.this);
 			return solver;
 		}
 
 		private ISolver creteBiDirectMode() {
 			BiDirectSolvable biDirectSolver = new BiDirectSolver();
 			panelWithPicture = new BiDirectPanel(biDirectSolver, quantity);
-			progress = new BiDirectSolutionProgress<>(biDirectSolver, GUI.this);
 			return biDirectSolver;
 		}
 
 		private ISolver createOneDirectMode() {
 			OneDirectSolvable oneDirectSolver = new OneDirectSolver();
 			panelWithPicture = new OneDirectPanel(oneDirectSolver, quantity);
-			progress = new OneDirectSolutionProgress<>(oneDirectSolver,
-					GUI.this);
 			return oneDirectSolver;
 		}
 
