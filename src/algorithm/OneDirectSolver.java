@@ -1,12 +1,14 @@
 package algorithm;
 
-public class OneDirectSolver extends Solver{
-	
+import graphics.OneDirectSolvable;
+
+public class OneDirectSolver extends Solver implements OneDirectSolvable {
+
 	private int step;
 
 	public void solve() {
 		if (step == 0) {
-			initiateStartState();
+			afterStart();
 		} else {
 			setMessages();
 		}
@@ -26,11 +28,12 @@ public class OneDirectSolver extends Solver{
 			}
 		}
 		while (list.hasNext()) {
-			list.next().updateLeftMsgs();;
+			list.next().updateLeftMsgs();
+			;
 		}
 	}
 
-	private void initiateStartState() {
+	private void afterStart() {
 		Agent current;
 		Agent neiborough;
 		while (list.hasNext()) {
@@ -39,6 +42,16 @@ public class OneDirectSolver extends Solver{
 			neiborough.setLeftMsg(current.getId());
 			neiborough.setNewLeftMsg(current.getId());
 		}
+	}
+
+	public void initiateStartState() {
+		Agent current;
+		while (list.hasNext()) {
+			current = list.next();
+			current.setLeftMsg(0);
+			current.setNewLeftMsg(0);
+		}
+		step = 0;
 	}
 
 	public String printMsgs() {

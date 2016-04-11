@@ -1,21 +1,24 @@
 package algorithm;
 
+import graphics.BiDirectSolvable;
+
 import java.util.ArrayList;
+import java.util.List;
 
-public class BiDirectSolver extends Solver{
+public class BiDirectSolver extends Solver implements BiDirectSolvable {
 
-	private int stage =0 ;
+	private int stage = 0;
 	private int step = 0;
-	private ArrayList<Integer> rightSendersIndexes = new ArrayList<>();
-	private ArrayList<Integer> newRightSendersIndexes = new ArrayList<>();
-	private ArrayList<Integer> leftSendersIndexes = new ArrayList<>();
-	private ArrayList<Integer> newLeftSendersIndexes = new ArrayList<>();
-	private ArrayList<Integer> currentLeaders = new ArrayList<>();
-	private ArrayList<Integer> rightRequesters = new ArrayList<>();
-	private ArrayList<Integer> leftRequesters = new ArrayList<Integer>();
+	private List<Integer> rightSendersIndexes = new ArrayList<>();
+	private List<Integer> newRightSendersIndexes = new ArrayList<>();
+	private List<Integer> leftSendersIndexes = new ArrayList<>();
+	private List<Integer> newLeftSendersIndexes = new ArrayList<>();
+	private List<Integer> currentLeaders = new ArrayList<>();
+	private List<Integer> rightRequesters = new ArrayList<>();
+	private List<Integer> leftRequesters = new ArrayList<Integer>();
 
 	public void solve() {
-		if (stage == 0 	&& step == 0) {
+		if (stage == 0 && step == 0) {
 			initiateStartState();
 		}
 		if (step == 0) {
@@ -26,7 +29,7 @@ public class BiDirectSolver extends Solver{
 		} else {
 			setRequests();
 		}
-		
+
 		if (step == Math.pow(2, stage)) {
 			stage++;
 			step = 0;
@@ -35,7 +38,7 @@ public class BiDirectSolver extends Solver{
 		}
 	}
 
-	private void initiateStartState() {
+	public void initiateStartState() {
 		for (int i = 0; i < list.size(); i++) {
 			currentLeaders.add(i);
 		}
@@ -238,15 +241,15 @@ public class BiDirectSolver extends Solver{
 		}
 	}
 
-	public ArrayList<Integer> getLeftSenders() {
+	public List<Integer> getLeftSenders() {
 		return leftSendersIndexes;
 	}
 
-	public ArrayList<Integer> getRightSenders() {
+	public List<Integer> getRightSenders() {
 		return rightSendersIndexes;
 	}
 
-	public ArrayList<Integer> getCurrentLeaders() {
+	public List<Integer> getCurrentLeaders() {
 		return currentLeaders;
 	}
 
@@ -271,6 +274,11 @@ public class BiDirectSolver extends Solver{
 			result += list.get(rightSendersIndexes.get(i)).getRightMsg() + "  ";
 		}
 		return result;
+	}
+
+	@Override
+	public Agent get(int idx) {
+		return list.get(idx);
 	}
 
 }
