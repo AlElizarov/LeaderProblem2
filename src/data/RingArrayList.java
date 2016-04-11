@@ -1,8 +1,12 @@
-package algorithm;
+package data;
 
+import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 
-public class RingArrayList implements MyListForLeaderElection<Agent>{
+import algorithm.Agent;
+import algorithm.DataForLeaderElecionKeepable;
+
+public class RingArrayList implements DataForLeaderElecionKeepable {
 
 	private int size;
 	private Agent[] arr = new Agent[1];
@@ -17,6 +21,10 @@ public class RingArrayList implements MyListForLeaderElection<Agent>{
 	}
 
 	public void add(Agent agent) {
+		if (agent.getId() <= 0) {
+			throw new NonPositiveValueException("Отрицательное значение: "
+					+ agent.getId());
+		}
 		if (size >= arr.length) {
 			Agent[] temp = arr;
 			arr = new Agent[temp.length * 2];
@@ -24,13 +32,16 @@ public class RingArrayList implements MyListForLeaderElection<Agent>{
 		}
 		arr[size++] = agent;
 	}
-	
+
 	public void addAll(Agent[] data) {
-		for(int i = 0; i < data.length; i++){
-			add(data[i]);
+		int len = data.length;
+		int[] idata = new int[len];
+		for (int i = 0; i < len; i++) {
+			idata[i] = data[i].getId();
 		}
+		addAll(idata);
 	}
-	
+
 	public Agent next() {
 		if (size == 0) {
 			throw new NoSuchElementException();
@@ -48,9 +59,12 @@ public class RingArrayList implements MyListForLeaderElection<Agent>{
 		}
 		return true;
 	}
-	
+
 	@Override
 	public Agent getNextNeiborough() {
+		if (size == 0) {
+			throw new NoSuchElementException();
+		}
 		if (index == size) {
 			return arr[0];
 		}
@@ -58,6 +72,9 @@ public class RingArrayList implements MyListForLeaderElection<Agent>{
 	}
 
 	public Agent get(int i) {
+		if (size == 0) {
+			throw new NoSuchElementException();
+		}
 		while (i >= size) {
 			i -= size;
 		}
@@ -85,20 +102,45 @@ public class RingArrayList implements MyListForLeaderElection<Agent>{
 
 	@Override
 	public void add(String item) {
-		add(Integer.parseInt(item));
+		try {
+			add(Integer.parseInt(item));
+		} catch (NumberFormatException exc) {
+			throw new FormatException("Неверный формат: " + item);
+		}
 	}
 
 	@Override
 	public void addAll(int[] data) {
-		for(int i = 0; i < data.length; i++){
-			add(data[i]);
+		if (data.length <= 0) {
+			throw new EmptyDataException();
+		}
+		handleDuplicateItems(data);
+		for (int item : data) {
+			add(item);
 		}
 	}
 
 	@Override
 	public void addAll(String[] data) {
-		for(int i = 0; i < data.length; i++){
-			add(data[i]);
+		int len = data.length;
+		int[] idata = new int[len];
+		for (int i = 0; i < len; i++) {
+			try {
+				idata[i] = Integer.parseInt(data[i]);
+			} catch (NumberFormatException exc) {
+				throw new FormatException("Неверный формат: " + data[i]);
+			}
+		}
+		addAll(idata);
+	}
+
+	private void handleDuplicateItems(int[] data) {
+		LinkedHashSet<Integer> intItems = new LinkedHashSet<>();
+		for (int item : data) {
+			if (!intItems.add(item)) {
+				throw new DuplicateValueException("Повторяющееся значение: "
+						+ item);
+			}
 		}
 	}
 
