@@ -1,13 +1,13 @@
 package algorithm;
 
-public abstract class Solver {
+import graphics.ISolver;
+import data.RingArrayList;
 
-	protected MyListForLeaderElection<Agent> list = new RingArrayList();
-	
-	public abstract void solve();
-	
-	public abstract String printMsgs();
+public abstract class Solver implements ISolver {
 
+	protected DataForLeaderElecionKeepable list = new RingArrayList();
+
+	@Override
 	public boolean hasSolution() {
 		Agent agent;
 		for (int i = 0; i < list.size(); i++) {
@@ -19,6 +19,7 @@ public abstract class Solver {
 		return false;
 	}
 
+	@Override
 	public int getLeaderId() {
 		int leaderId = 0;
 		Agent agent;
@@ -53,6 +54,21 @@ public abstract class Solver {
 
 	public void addAll(String[] item) {
 		list.addAll(item);
+	}
+
+	@Override
+	public Agent next() {
+		return list.next();
+	}
+
+	@Override
+	public boolean hasNext() {
+		return list.hasNext();
+	}
+	
+	@Override
+	public String toString(){
+		return list.toString();
 	}
 
 }
