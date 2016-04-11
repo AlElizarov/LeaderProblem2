@@ -26,4 +26,6 @@ public interface DataForLeaderElecionKeepable {
 
 	boolean hasNext();
 
+	void setRandomData(int quantity);
+
 }

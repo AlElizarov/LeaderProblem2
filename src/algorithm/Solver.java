@@ -70,5 +70,10 @@ public abstract class Solver implements ISolver {
 	public String toString(){
 		return list.toString();
 	}
+	
+	@Override
+	public void setRandomData(int quantity){
+		list.setRandomData(quantity);
+	}
 
 }

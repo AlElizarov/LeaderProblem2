@@ -1,7 +1,9 @@
 package data;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
+import java.util.Random;
 
 import algorithm.Agent;
 import algorithm.DataForLeaderElecionKeepable;
@@ -141,6 +143,27 @@ public class RingArrayList implements DataForLeaderElecionKeepable {
 				throw new DuplicateValueException("Повторяющееся значение: "
 						+ item);
 			}
+		}
+	}
+
+	@Override
+	public void setRandomData(int quantity) {
+		if(quantity <= 0){
+			throw new EmptyDataException();
+		}
+		size = 0;
+		arr = new Agent[1];
+		index = 0;
+		ArrayList<Integer> items = new ArrayList<>();
+		for (int i = 0; i < quantity; i++) {
+			items.add(i + 1);
+		}
+
+		while (!items.isEmpty()) {
+			Random r = new Random();
+			int index = r.nextInt(items.size());
+			add(new Agent(items.get(index)));
+			items.remove(index);
 		}
 	}
 

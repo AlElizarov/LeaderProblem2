@@ -30,4 +30,6 @@ public interface ISolver {
 
 	boolean hasNext();
 
+	void setRandomData(int quantuty);
+
 }
