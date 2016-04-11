@@ -4,15 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Random;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -29,7 +25,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
@@ -37,35 +32,30 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import net.miginfocom.swing.MigLayout;
-import algorithm.Agent;
-import algorithm.BiDirectLeaderElection;
-import algorithm.OneDirectLeaderElection;
-import algorithm.MyAbstractList;
-import algorithm.BiRingList;
-import algorithm.RingList;
+import algorithm.BiDirectSolver;
+import algorithm.OneDirectSolver;
+import data.DuplicateValueException;
+import data.FormatException;
+import data.NonPositiveValueException;
 
 public class GUI {
 
-	private int quantity;
-	private boolean isBidirect;
-	private MyAbstractPanel panelWithPicture;
-	private MyAbstractList list;
-	private int taskStep;
-	private JSplitPane rightSplit;
 	private JFrame frame;
-	private SwingWorker<Void, Void> sw;
+
+	private JSplitPane rightSplit;
+	private MyAbstractPanel panelWithPicture;
+	private AbstractSolutionProgress<Void, Void> progress;
+
 	private JButton setup;
 	private JButton stepButtop;
 	private JButton go;
 	private JButton stop;
+
 	private JTextField quantityField;
 	private JComboBox<Object> comboBoxForMode;
 	private JTextArea textAreaForList;
 	private JRadioButton hand;
 	private JTextPane textAreaForTextMode;
-	private StringBuilder textModeString;
-	private int stage;
-	private int step;
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -88,12 +78,7 @@ public class GUI {
 
 	public GUI() {
 		frame = new JFrame("LEADER ELECTION");
-
-		// refact
-		setData();
-		ImageIcon image = new ImageIcon("images/leaderIcon.png");
-		frame.setIconImage(image.getImage());
-
+		setFrameIcon();
 		frame.addWindowListener(new WindowAdapter() {
 
 			@Override
@@ -108,106 +93,120 @@ public class GUI {
 					System.exit(0);
 				}
 			}
-
 		});
-
-		frame.setMinimumSize(new Dimension(1000, 700));
-		frame.setLocationRelativeTo(null);
 		frame.getContentPane().add(createMainPanel());
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		frame.setVisible(true);
+		setFrameParameters();
 		quantityField.requestFocus();
 	}
 
+	public void updateFrame() {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				frame.revalidate();
+				frame.repaint();
+				panelWithPicture.repaint();
+			}
+		});
+	}
+
+	public void setButtonsVisibility(boolean setupVisibility,
+			boolean stepVisibility, boolean goVisibility, boolean stopVisibility) {
+		setup.setEnabled(setupVisibility);
+		stepButtop.setEnabled(stepVisibility);
+		go.setEnabled(goVisibility);
+		stop.setEnabled(stopVisibility);
+	}
+
+	public void setTextOnTextModeArea(String text) {
+		textAreaForTextMode.setText(text);
+	}
+
+	private void setFrameParameters() {
+		frame.setMinimumSize(new Dimension(1000, 700));
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.setVisible(true);
+	}
+
+	private void setFrameIcon() {
+		ImageIcon image = new ImageIcon("images/leaderIcon.png");
+		frame.setIconImage(image.getImage());
+	}
+
 	private Component createMainPanel() {
-		JPanel mainPanel = new JPanel();
-		mainPanel.setLayout(new BorderLayout());
-		mainPanel.add(createButtonPanel(), BorderLayout.WEST);
+		JPanel mainPanel = new JPanel(new BorderLayout());
+		mainPanel.add(createInfoPanel(), BorderLayout.WEST);
 		mainPanel.add(createRightSplit(), BorderLayout.CENTER);
 		return mainPanel;
 	}
 
 	private Component createRightSplit() {
 		rightSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
-		rightSplit.setDividerLocation(0.9);
-		rightSplit.setResizeWeight(0.95);
-		textAreaForTextMode = new JTextPane();
-		JPanel temp = new JPanel(new BorderLayout());
-		temp.add(textAreaForTextMode, BorderLayout.CENTER);
-		textAreaForTextMode.setFont(textAreaForTextMode.getFont().deriveFont(
-				16f));
-		JScrollPane scroll = new JScrollPane(temp);
-		rightSplit.setBottomComponent(scroll);
-		rightSplit.setVisible(false);
+		setSplitParameters();
+		rightSplit.setBottomComponent(createTextModeArea());
 		return rightSplit;
 	}
 
-	private void setData() {
-		ArrayList<Integer> items = new ArrayList<>();
-		if (!isBidirect) {
-			list = new RingList();
-		} else {
-			list = new BiRingList();
-		}
-		for (int i = 0; i < quantity; i++) {
-			items.add(i + 1);
-		}
-
-		while (!items.isEmpty()) {
-			Random r = new Random();
-			int index = r.nextInt(items.size());
-			list.add(new Agent(items.get(index)));
-			items.remove(index);
-		}
+	private Component createTextModeArea() {
+		textAreaForTextMode = new JTextPane();
+		JPanel panelForTextMode = new JPanel(new BorderLayout());
+		panelForTextMode.add(textAreaForTextMode, BorderLayout.CENTER);
+		textAreaForTextMode.setFont(textAreaForTextMode.getFont().deriveFont(
+				16f));
+		JScrollPane scroll = new JScrollPane(panelForTextMode);
+		return scroll;
 	}
 
-	private JPanel createButtonPanel() {
+	private void setSplitParameters() {
+		rightSplit.setDividerLocation(0.9);
+		rightSplit.setResizeWeight(0.95);
+		rightSplit.setVisible(false);
+	}
+
+	private Component createInfoPanel() {
 		JPanel infoPanel = new JPanel(new MigLayout());
-		createSetupButton();
-		createStepButton();
-		createGoButton();
-		createStopButton();
-		setButtonsVisibility(true, false, false, false);
+		createButtons();
+		infoPanel.add(createButtonsPane(), "wrap");
+		infoPanel.add(panelForQuantityAndMode(), "wrap");
+		infoPanel.add(createPanelForListGenerate(), "wrap");
+		return infoPanel;
+	}
 
-		JPanel panelForButtons = new JPanel(new MigLayout());
-		panelForButtons.add(setup, "sg 1");
-		panelForButtons.add(stepButtop, "sg 1, wrap");
-		panelForButtons.setBorder(new EmptyBorder(0, 30, 0, 30));
-		panelForButtons.add(go, "sg 1");
-		panelForButtons.add(stop, "sg 1");
-
-		infoPanel.add(panelForButtons, "wrap");
-
-		JPanel panelForQuantityAndMode = new JPanel(new MigLayout());
-		panelForQuantityAndMode.add(new JLabel("<html>размер<br>задачи: "),
-				"gap, sg 2");
-		quantityField = new JTextField(4);
-		panelForQuantityAndMode.add(quantityField, "wrap");
-		panelForQuantityAndMode.add(new JLabel("Режим: "), "gap, sg 2");
-		comboBoxForMode = new JComboBox<>();
-		comboBoxForMode.addItem("Однонаправленный");
-		comboBoxForMode.addItem("Двунаправленный");
-		panelForQuantityAndMode.add(comboBoxForMode, "wrap");
-		panelForQuantityAndMode.setBorder(new EmptyBorder(0, 50, 0, 50));
-
-		infoPanel.add(panelForQuantityAndMode, "wrap");
-
+	private Component createPanelForListGenerate() {
 		JPanel panelForListGenereate = new JPanel(new MigLayout());
-
-		TitledBorder tb = new TitledBorder(new LineBorder(Color.BLACK, 1));
-		tb.setTitle("Расположение узлов");
-		tb.setTitleJustification(TitledBorder.CENTER);
+		TitledBorder tb = createBorderForList();
 		panelForListGenereate.setBorder(new TitledBorder(tb));
+		panelForListGenereate.add(createRadioPanel(), "wrap");
+		panelForListGenereate.add(createTextAreaForList());
+		return panelForListGenereate;
+	}
 
-		JRadioButton random = new JRadioButton(
-				"<html>Случайно<br>сгенерировать");
-		random.addActionListener(new ActionListener() {
+	private Component createTextAreaForList() {
+		textAreaForList = new JTextArea(1, 30);
+		textAreaForList.setFont(textAreaForList.getFont().deriveFont(12f));
+		textAreaForList.setEnabled(false);
+		JScrollPane scrollForList = new JScrollPane(textAreaForList);
+		scrollForList
+				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+		scrollForList
+				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		return scrollForList;
+	}
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				textAreaForList.setEnabled(false);
-			}
-		});
+	private Component createRadioPanel() {
+		JPanel panelForRandomAndHandle = new JPanel(new MigLayout());
+		JRadioButton random = createRandomRadio();
+		panelForRandomAndHandle.add(random);
+		createHandRadio();
+		panelForRandomAndHandle.add(hand, "wrap");
+		ButtonGroup gr = new ButtonGroup();
+		gr.add(random);
+		gr.add(hand);
+		random.setSelected(true);
+		return panelForRandomAndHandle;
+	}
+
+	private void createHandRadio() {
 		hand = new JRadioButton("<html>Задать<br>вручную");
 		hand.addActionListener(new ActionListener() {
 
@@ -217,216 +216,117 @@ public class GUI {
 				textAreaForList.requestFocus();
 			}
 		});
-		JPanel panelForRandomAndHandle = new JPanel(new MigLayout());
-		panelForRandomAndHandle.add(random);
-		panelForRandomAndHandle.add(hand, "wrap");
-
-		panelForListGenereate.add(panelForRandomAndHandle, "wrap");
-
-		ButtonGroup gr = new ButtonGroup();
-		gr.add(random);
-		gr.add(hand);
-		random.setSelected(true);
-
-		textAreaForList = new JTextArea(1, 30);
-		textAreaForList.setFont(textAreaForList.getFont().deriveFont(12f));
-		textAreaForList.setEnabled(false);
-		JScrollPane scrollForList = new JScrollPane(textAreaForList);
-		scrollForList
-				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-		scrollForList
-				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		panelForListGenereate.add(scrollForList);
-
-		infoPanel.add(panelForListGenereate, "wrap");
-
-		return infoPanel;
 	}
 
-	private void createStopButton() {
-		stop = new JButton(" stop ");
+	private JRadioButton createRandomRadio() {
+		JRadioButton random = new JRadioButton(
+				"<html>Случайно<br>сгенерировать");
+		random.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				textAreaForList.setEnabled(false);
+			}
+		});
+		return random;
+	}
+
+	private TitledBorder createBorderForList() {
+		Color color = Color.black;
+		int width = 1;
+		LineBorder lb = new LineBorder(color, width);
+		String title = "Расположение узлов";
+		int pos = TitledBorder.CENTER;
+		return createTitledBorder(lb, title, pos);
+	}
+
+	private TitledBorder createTitledBorder(LineBorder lineBorder,
+			String string, int center) {
+		TitledBorder tb = new TitledBorder(new LineBorder(Color.BLACK, 1));
+		tb.setTitle("Расположение узлов");
+		tb.setTitleJustification(TitledBorder.CENTER);
+		return tb;
+	}
+
+	private Component panelForQuantityAndMode() {
+		JPanel panelForQuantityAndMode = new JPanel(new MigLayout());
+		panelForQuantityAndMode.add(new JLabel("<html>размер<br>задачи: "),
+				"gap, sg 2");
+		createQuantityField();
+		panelForQuantityAndMode.add(quantityField, "wrap");
+		panelForQuantityAndMode.add(new JLabel("Режим: "), "gap, sg 2");
+		createComboBoxForMode();
+		panelForQuantityAndMode.add(comboBoxForMode, "wrap");
+		panelForQuantityAndMode.setBorder(new EmptyBorder(0, 50, 0, 50));
+		return panelForQuantityAndMode;
+	}
+
+	private void createComboBoxForMode() {
+		comboBoxForMode = new JComboBox<>();
+		comboBoxForMode.addItem("Однонаправленный");
+		comboBoxForMode.addItem("Двунаправленный");
+	}
+
+	private void createQuantityField() {
+		quantityField = new JTextField(4);
+	}
+
+	private void createButtons() {
+		createSetupButton();
+		stepButtop = new JButton("step");
+		go = new JButton("go");
+		stop = new JButton("stop");
+		setButtonsVisibility(true, false, false, false);
+	}
+
+	private Component createButtonsPane() {
+		JPanel panelForButtons = new JPanel(new MigLayout());
+		panelForButtons.add(setup, "sg 1");
+		panelForButtons.add(stepButtop, "sg 1, wrap");
+		panelForButtons.setBorder(new EmptyBorder(0, 30, 0, 30));
+		panelForButtons.add(go, "sg 1");
+		panelForButtons.add(stop, "sg 1");
+		return panelForButtons;
+	}
+
+	private void addStopListener() {
+		removeListeners(stop);
 		stop.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				sw.cancel(true);
+				progress.cancel(true);
 				setButtonsVisibility(true, true, true, false);
 			}
 		});
 	}
 
-	private void createGoButton() {
-		go = new JButton("  go  ");
+	private void addGoListener() {
+		removeListeners(go);
 		go.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				setButtonsVisibility(false, false, false, true);
-				if (!isBidirect) {
-					sw = new SwingWorkerForButtonGo<Void, Void>();
-				} else {
-					sw = new SwingWorkerForButtonGoBiDirect<Void, Void>();
-				}
-				sw.execute();
+				progress.execute();
 			}
 		});
 	}
 
-	private void createStepButton() {
-		stepButtop = new JButton(" step ");
+	private void addStepListener() {
+		removeListeners(stepButtop);
+		stepButtop.addActionListener(progress);
+	}
 
+	private void removeListeners(JButton button) {
+		for (ActionListener listener : button.getActionListeners()) {
+			button.removeActionListener(listener);
+		}
 	}
 
 	private void createSetupButton() {
 		setup = new JButton("setup");
-		setup.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					quantity = Integer.valueOf(quantityField.getText());
-					if (quantity <= 0) {
-						JOptionPane
-								.showMessageDialog(null,
-										"Размер задачи должен быть положительным числом");
-						quantityField.requestFocus();
-						splitReset();
-						return;
-					}
-				} catch (Exception exc) {
-					if (exc.getMessage().equals("For input string: \"\"")) {
-						JOptionPane.showMessageDialog(null,
-								"Пожалуйста введите размер задачи");
-					} else {
-						JOptionPane
-								.showMessageDialog(null,
-										"Некорректный ввод: Пожалуйста введите целое число");
-						quantityField.setText("");
-					}
-					quantityField.requestFocus();
-					splitReset();
-					return;
-				}
-				if (comboBoxForMode.getSelectedItem()
-						.equals("Однонаправленный")) {
-					isBidirect = false;
-				} else {
-					isBidirect = true;
-				}
-				if (hand.isSelected()) {
-
-					if (!isBidirect) {
-						list = new RingList();
-					} else {
-						list = new BiRingList();
-					}
-					String[] items = textAreaForList.getText().split(",");
-					LinkedHashSet<Integer> intItems = new LinkedHashSet<>();
-					for (int i = 0; i < items.length; i++) {
-						try {
-							int element = Integer.valueOf(items[i].trim());
-							if (!intItems.add(element)) {
-								JOptionPane
-										.showMessageDialog(
-												null,
-												"Некорректный значение: "
-														+ "Не должно быть повторяющихся элементов");
-								textAreaForList.requestFocus();
-								splitReset();
-								return;
-							}
-							if (element <= 0) {
-								JOptionPane
-										.showMessageDialog(
-												null,
-												"Некорректное значение: "
-														+ "Элементы должны быть больше нуля");
-								textAreaForList.requestFocus();
-								splitReset();
-								return;
-							}
-						} catch (Exception exc) {
-							JOptionPane
-									.showMessageDialog(
-											null,
-											"Некорректный формат ввода: "
-													+ "Пожалуйста вводите только целые числа через запятую");
-							textAreaForList.requestFocus();
-							textAreaForList.setText("");
-							splitReset();
-							return;
-						}
-					}
-					if (intItems.size() != quantity) {
-						JOptionPane.showMessageDialog(null,
-								"Некорректный формат ввода: "
-										+ "Неверное количесвто элементов");
-						textAreaForList.requestFocus();
-						splitReset();
-						return;
-					}
-					Iterator<Integer> iter = intItems.iterator();
-					while (iter.hasNext()) {
-						list.add(new Agent(iter.next()));
-					}
-				} else {
-					// refact
-					setData();
-				}
-
-				if (!isBidirect) {
-					panelWithPicture = new OneDirectPanel();
-				} else {
-					panelWithPicture = new BiDirectPanel();
-				}
-				ActionListener[] listeners = stepButtop
-						.getListeners(ActionListener.class);
-				for (int i = 0; i < listeners.length; i++) {
-					stepButtop.removeActionListener(listeners[i]);
-				}
-				stepButtop.removeAll();
-				if (!isBidirect) {
-					stepButtop.addActionListener(new StepListenerOneDirect());
-				} else {
-					stepButtop.addActionListener(new StepListenerBiDirect());
-				}
-				taskStep = 0;
-				stage = 0;
-				step = 0;
-				rightSplit.setTopComponent(panelWithPicture);
-				panelWithPicture.setQuantity(quantity);
-				textAreaForTextMode.setContentType("text/html");
-				textModeString = new StringBuilder(
-						"<b>Располажение узлов:</b> " + list + "<br>");
-				textAreaForTextMode.setText(textModeString.toString());
-				updateFrame();
-				setButtonsVisibility(true, true, true, false);
-				rightSplit.setVisible(true);
-				if ((!isBidirect && quantity >= 40)
-						|| (isBidirect && quantity >= 20)) {
-					rightSplit.setDividerLocation(0.5);
-					rightSplit.setResizeWeight(0.5);
-				}
-				frame.revalidate();
-			}
-
-		});
-	}
-
-	private void updateFrame() {
-		panelWithPicture.setList(list);
-		panelWithPicture.setStep(taskStep);
-		panelWithPicture.setStage(stage);
-		panelWithPicture.setBiDirectStep(step);
-		frame.repaint();
-	}
-
-	private void setButtonsVisibility(boolean setupVisibility,
-			boolean stepVisibility, boolean goVisibility, boolean stopVisibility) {
-		setup.setEnabled(setupVisibility);
-		stepButtop.setEnabled(stepVisibility);
-		go.setEnabled(goVisibility);
-		stop.setEnabled(stopVisibility);
+		setup.addActionListener(new SetupButtonListener());
 	}
 
 	private void splitReset() {
@@ -434,181 +334,122 @@ public class GUI {
 		setButtonsVisibility(true, false, false, false);
 	}
 
-	private class SwingWorkerForButtonGo<T, V> extends SwingWorker<T, V> {
-
-		@Override
-		protected T doInBackground() throws Exception {
-			while (taskStep != quantity) {
-				Thread.sleep(2000);
-				OneDirectLeaderElection.solve(list, taskStep++);
-				publish();
-			}
-			taskStep = 0;
-			return null;
-		}
-
-		@Override
-		protected void process(List<V> chunks) {
-			if (taskStep == 1) {
-				textModeString.append("<b>Получение сообщений:</b><br>");
-				textAreaForTextMode.setText(textModeString.toString());
-			}
-			textModeString.append("<b>Шаг " + taskStep + ":</b> "
-					+ list.printMsgs() + "<br>");
-			textAreaForTextMode.setText(textModeString.toString());
-			updateFrame();
-		}
-
-		@Override
-		protected void done() {
-			updateFrame();
-			setButtonsVisibility(true, true, true, false);
-			stop.setEnabled(false);
-			setup.setEnabled(true);
-			stepButtop.setEnabled(true);
-			go.setEnabled(true);
-			int leaderId = list.getLeaderId();
-
-			if (taskStep == 0) {
-				textModeString
-						.append("<b><font size = 6>ЛИДЕР НАЙДЕН!!! Id лидера: "
-								+ leaderId + "</font></b><br>");
-				textAreaForTextMode.setText(textModeString.toString());
-			}
-			updateFrame();
-		}
-
-	}
-
-	private class StepListenerOneDirect implements ActionListener {
+	private class SetupButtonListener implements ActionListener {
+		
+		private int quantity;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (taskStep == 0) {
-				textModeString.append("<b>Получение сообщений:</b><br>");
-				textAreaForTextMode.setText(textModeString.toString());
-			}
-			OneDirectLeaderElection.solve(list, taskStep++);
-			textModeString.append("<b>Шаг " + taskStep + ":</b> "
-					+ list.printMsgs() + "<br>");
-			textAreaForTextMode.setText(textModeString.toString());
-			if (taskStep == quantity) {
-				taskStep = 0;
-				textModeString
-						.append("<b><font size = 6>ЛИДЕР НАЙДЕН!!! Id лидера: "
-								+ list.getLeaderId() + "</font></b><br>");
-				textAreaForTextMode.setText(textModeString.toString());
-			}
-			updateFrame();
-		}
-
-	}
-
-	private class StepListenerBiDirect implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (stage == 0 && step == 0) {
-				textModeString.append("<b>Получение сообщений:</b><br>");
-				textAreaForTextMode.setText(textModeString.toString());
-			}
-
-			BiDirectLeaderElection.choice(list, stage, step);
-
-			textModeString.append("<b>Стадия: " + stage + " Шаг " + (step + 1)
-					+ ":</b> " + list.printMsgs() + "<br>");
-			textAreaForTextMode.setText(textModeString.toString());
-
-			if (Math.pow(2, stage) == step) {
-				stage++;
-				step = 0;
-			} else {
-				step++;
-			}
-
-			int loopEnd = (int) (Math.log(list.size()) / Math.log(2));
-			if ((list.size() & (list.size() - 1)) != 0 || quantity == 1) {
-				loopEnd += 1;
-
-			}
-			if (stage == loopEnd && step == list.size()) {
-
-				textModeString
-						.append("<b><font size = 6>ЛИДЕР НАЙДЕН!!! Id лидера: "
-								+ list.getLeaderId() + "</font></b><br>");
-				textAreaForTextMode.setText(textModeString.toString());
-
-				stage = 0;
-				step = 0;
-
-			}
-			if (quantity == 1 && stage == 1 && step == 0) {
-				stage = 0;
-				step = 1;
-			}
-			updateFrame();
-
-		}
-
-	}
-
-	private class SwingWorkerForButtonGoBiDirect<T, V> extends
-			SwingWorker<T, V> {
-
-		@Override
-		protected T doInBackground() throws Exception {
-			int loopEnd = (int) (Math.log(list.size()) / Math.log(2));
-			if ((list.size() & (list.size() - 1)) != 0 || quantity == 1) {
-				loopEnd += 1;
-			}
-			while (stage <= loopEnd) {
-				while (step <= Math.pow(2, stage)) {
-					Thread.sleep(2000);
-					BiDirectLeaderElection.choice(list, stage, step++);
-					if (stage == loopEnd && step == list.size()) {
-						textModeString
-								.append("<b><font size = 6>ЛИДЕР НАЙДЕН!!! Id лидера: "
-										+ list.getLeaderId()
-										+ "</font></b><br>");
-						textAreaForTextMode.setText(textModeString.toString());
-						stage = 0;
-						step = 0;
-						return null;
-					}
-					
-					if (quantity == 1 && stage == 1 && step == 0) {
-						stage = 0;
-						step = 1;
-					}
-					publish();
+			ISolver solver = setMode();
+			try {
+				quantity = Integer.valueOf(quantityField.getText());
+				if (quantity <= 0) {
+					showErrorMsg("Размер задачи должен быть положительным числом");
+					quantityField.setText("");
+					return;
 				}
-				stage++;
-				step = 0;
+			} catch (Exception exc) {
+				handleErrors(exc);
+				return;
 			}
-			stage = 0;
-			step = 0;
-			return null;
-		}
 
-		@Override
-		protected void process(List<V> chunks) {
-			if (stage == 0 && step == 1) {
-				textModeString.append("<b>Получение сообщений:</b><br>");
-				textAreaForTextMode.setText(textModeString.toString());
+			if (hand.isSelected()) {
+				if(!fillSolverHandlessOk(solver)){
+					return;
+				}
+			} else {
+				solver.setRandomData(quantity);
 			}
-			textModeString.append("<b>Стадия: " + stage + " Шаг " + (step + 1)
-					+ ":</b> " + list.printMsgs() + "<br>");
-			textAreaForTextMode.setText(textModeString.toString());
-			updateFrame();
-		}
-
-		@Override
-		protected void done() {
+			
+			addListeners();
+			rightSplit.setTopComponent(panelWithPicture);
+			establishTextmodeArea(solver);
 			updateFrame();
 			setButtonsVisibility(true, true, true, false);
-
+			rightSplit.setVisible(true);
 		}
 
+		private void establishTextmodeArea(ISolver solver) {
+			textAreaForTextMode.setContentType("text/html");
+			textAreaForTextMode.setText("<b>Располажение узлов:</b> " + solver
+					+ "<br>");
+		}
+
+		private void addListeners() {
+			addStepListener();
+			addStopListener();
+			addGoListener();
+		}
+
+		private boolean fillSolverHandlessOk(ISolver solver) {
+			String[] items = textAreaForList.getText().split(",");
+			try {
+				solver.addAll(items);
+			} catch (NonPositiveValueException exc) {
+				showErrorMsg("Некорректное значение: "
+						+ "Элементы должны быть больше нуля");
+				textAreaForList.requestFocus();
+				textAreaForList.setText("");
+				return false;
+			} catch (DuplicateValueException exc) {
+				showErrorMsg("Некорректный значение: "
+						+ "Не должно быть повторяющихся элементов");
+				textAreaForList.requestFocus();
+				return false;
+			} catch (FormatException exc) {
+				showErrorMsg("Некорректный формат ввода: "
+						+ "Пожалуйста, вводите только целые числа");
+				textAreaForList.requestFocus();
+				return false;
+			}
+			if (items.length != quantity) {
+				showErrorMsg("Некорректный формат ввода: "
+						+ "Неверное количесвто элементов");
+				textAreaForList.requestFocus();
+				return false;
+			}
+			return true;
+		}
+
+		private void handleErrors(Exception exc) {
+			if (exc.getMessage().equals("For input string: \"\"")) {
+				showErrorMsg("Пожалуйста введите размер задачи");
+				quantityField.setText("");
+			} else {
+				showErrorMsg("Некорректный ввод: Пожалуйста введите целое число");
+				quantityField.setText("");
+			}
+		}
+
+		private ISolver setMode() {
+			ISolver solver;
+			if (comboBoxForMode.getSelectedItem().equals("Однонаправленный")) {
+				solver = createOneDirectMode();
+			} else {
+				solver = creteBiDirectMode();
+			}
+			return solver;
+		}
+
+		private ISolver creteBiDirectMode() {
+			BiDirectSolvable biDirectSolver = new BiDirectSolver();
+			panelWithPicture = new BiDirectPanel(biDirectSolver, quantity);
+			progress = new BiDirectSolutionProgress<>(biDirectSolver, GUI.this);
+			return biDirectSolver;
+		}
+
+		private ISolver createOneDirectMode() {
+			OneDirectSolvable oneDirectSolver = new OneDirectSolver();
+			panelWithPicture = new OneDirectPanel(oneDirectSolver, quantity);
+			progress = new OneDirectSolutionProgress<>(oneDirectSolver,
+					GUI.this);
+			return oneDirectSolver;
+		}
+
+		private void showErrorMsg(String msg) {
+			JOptionPane.showMessageDialog(null, msg);
+			splitReset();
+		}
 	}
 
 }
