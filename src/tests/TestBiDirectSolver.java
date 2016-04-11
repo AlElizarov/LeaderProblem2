@@ -18,17 +18,17 @@ public class TestBiDirectSolver {
 	public void setUp() {
 		solver = new BiDirectSolver();
 	}
-	
+
 	@Test
-	public void testHasSolution(){
+	public void testHasSolution() {
 		solver.add(3);
 		solver.solve();
 		boolean isSoluted = solver.hasSolution();
 		assertTrue(isSoluted);
 	}
-	
+
 	@Test
-	public void testGetLeaderId(){
+	public void testGetLeaderId() {
 		solver.add(3);
 		solver.solve();
 		int expect = 3;
@@ -121,7 +121,7 @@ public class TestBiDirectSolver {
 		solver.addAll(data);
 		solve();
 		String expect = "<i>”злы, отправл€ющие сообщени€ налево:</i> 4  "
-				+ "<br><i>—ообщени€ идущие по часовой стрелке:</i> 0  "
+				+ "<br><i>—ообщени€ идущие по часовой стрелке:</i> 8  "
 				+ "<br><i>”злы, отправл€ющие сообщени€ направо:</i> 6  "
 				+ "<br><i>—ообщени€ идущие против часовой стрелке:</i> 8  ";
 		String msgs = solver.printMsgs();

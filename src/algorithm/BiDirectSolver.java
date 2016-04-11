@@ -7,15 +7,15 @@ import java.util.List;
 
 public class BiDirectSolver extends Solver implements BiDirectSolvable {
 
-	private int stage = 0;
-	private int step = 0;
-	private List<Integer> rightSendersIndexes = new ArrayList<>();
-	private List<Integer> newRightSendersIndexes = new ArrayList<>();
-	private List<Integer> leftSendersIndexes = new ArrayList<>();
-	private List<Integer> newLeftSendersIndexes = new ArrayList<>();
-	private List<Integer> currentLeaders = new ArrayList<>();
-	private List<Integer> rightRequesters = new ArrayList<>();
-	private List<Integer> leftRequesters = new ArrayList<Integer>();
+	private int stage;
+	private int step;
+	private List<Integer> rightSendersIndexes;
+	private List<Integer> newRightSendersIndexes;
+	private List<Integer> leftSendersIndexes;
+	private List<Integer> newLeftSendersIndexes;
+	private List<Integer> currentLeaders;
+	private List<Integer> rightRequesters;
+	private List<Integer> leftRequesters;
 
 	public void solve() {
 		if (stage == 0 && step == 0) {
@@ -39,6 +39,15 @@ public class BiDirectSolver extends Solver implements BiDirectSolvable {
 	}
 
 	public void initiateStartState() {
+		step = 0;
+		stage = 0;
+		currentLeaders = new ArrayList<>();
+		leftSendersIndexes = new ArrayList<>();
+		newLeftSendersIndexes = new ArrayList<>();
+		rightSendersIndexes = new ArrayList<>();
+		newRightSendersIndexes = new ArrayList<>();
+		rightRequesters = new ArrayList<>();
+		leftRequesters = new ArrayList<Integer>();
 		for (int i = 0; i < list.size(); i++) {
 			currentLeaders.add(i);
 		}
@@ -177,7 +186,7 @@ public class BiDirectSolver extends Solver implements BiDirectSolvable {
 			rightRecepient = list.get(rightRecepientIdx);
 			leftSender = list.get(rightRecepientIdx - 1);
 			rightRecepient.setNewLeftMsg(leftSender.getLeftMsg());
-			leftSender.setLeftMsg(0); // reset left messages
+			leftSender.updateLeftMsgs();
 		}
 	}
 
