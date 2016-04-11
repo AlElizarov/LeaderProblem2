@@ -3,16 +3,22 @@ package tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.util.NoSuchElementException;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import algorithm.Agent;
-import algorithm.MyListForLeaderElection;
-import algorithm.RingArrayList;
+import algorithm.DataForLeaderElecionKeepable;
+import data.DuplicateValueException;
+import data.EmptyDataException;
+import data.FormatException;
+import data.NonPositiveValueException;
+import data.RingArrayList;
 
 public class TestAbstractList {
 
-	private MyListForLeaderElection<Agent> list;
+	private DataForLeaderElecionKeepable list;
 
 	@Before
 	public void setUp() {
@@ -43,7 +49,7 @@ public class TestAbstractList {
 		int actualSize = list.size();
 		assertEquals(expectedSize, actualSize);
 	}
-	
+
 	@Test
 	public void testAddAllIntegers() {
 		int[] data = { 10, 11, 12 };
@@ -52,7 +58,7 @@ public class TestAbstractList {
 		int actualSize = list.size();
 		assertEquals(expectedSize, actualSize);
 	}
-	
+
 	@Test
 	public void testAddAllStrings() {
 		String[] data = { "10", "11", "12" };
@@ -60,6 +66,48 @@ public class TestAbstractList {
 		int expectedSize = 6;
 		int actualSize = list.size();
 		assertEquals(expectedSize, actualSize);
+	}
+
+	@Test(expected = DuplicateValueException.class)
+	public void testDuplicatesAddition() {
+		int testData[] = { 8, 7, 9, 8 };
+		list.addAll(testData);
+	}
+
+	@Test(expected = NonPositiveValueException.class)
+	public void testNonPositiveAddition() {
+		int testData[] = { 8, 7, 9, 0 };
+		list.addAll(testData);
+	}
+
+	@Test(expected = FormatException.class)
+	public void testWrongFormatAddition() {
+		String[] testData = { "10", "11", "12e" };
+		list.addAll(testData);
+	}
+
+	@Test(expected = EmptyDataException.class)
+	public void testEmptyDataAddition() {
+		int[] testData = {};
+		list.addAll(testData);
+	}
+
+	@Test(expected = NoSuchElementException.class)
+	public void testEmtyNext() {
+		list = new RingArrayList();
+		list.next();
+	}
+
+	@Test(expected = NoSuchElementException.class)
+	public void testEmtyGetNextNeiborough() {
+		list = new RingArrayList();
+		list.getNextNeiborough();
+	}
+
+	@Test(expected = NoSuchElementException.class)
+	public void testEmtyGet() {
+		list = new RingArrayList();
+		list.get(0);
 	}
 
 	@Test
