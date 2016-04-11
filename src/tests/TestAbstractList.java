@@ -161,5 +161,18 @@ public class TestAbstractList {
 		int actual = list.get(11).getId();
 		assertEquals(expect, actual);
 	}
+	
+	@Test
+	public void testRandomData(){
+		list.setRandomData(4);
+		int expectSize = 4;
+		int actualSize = list.size();
+		assertEquals(expectSize, actualSize);
+	}
+	
+	@Test(expected = EmptyDataException.class)
+	public void testRandomEmptyData(){
+		list.setRandomData(0);
+	}
 
 }
