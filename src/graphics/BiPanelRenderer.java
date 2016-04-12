@@ -33,6 +33,10 @@ public class BiPanelRenderer extends AbstractPanelRenderer {
 		lineCenterY = (y1 + lineCenterY) / 2;
 		graphics.drawString(rightMsg, lineCenterX, lineCenterY);
 	}
+	
+	public void createRightMsgs(){
+		
+	}
 
 	@Override
 	protected void setRenderParameters() {
@@ -45,14 +49,13 @@ public class BiPanelRenderer extends AbstractPanelRenderer {
 	}
 
 	@Override
-	protected int createArrowLen() {
-		return 0;
-	}
-
-	@Override
 	protected void drawLines(int xStart, int yStart, int xEnd, int yEnd) {
 		drawArrow(xStart, yStart, xEnd, yEnd);
 		drawArrow(xEnd, yEnd, xStart, yStart);
+	}
+	
+	public void drawCurrentLeaders(int ballIdx){
+		paintLeader(ballIdx, Color.BLUE, "CURRENT LEADER");
 	}
 
 }

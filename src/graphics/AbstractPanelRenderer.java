@@ -19,7 +19,6 @@ public abstract class AbstractPanelRenderer {
 	protected int xLeaderPos;
 	protected int yLeaderPos;
 	protected Graphics graphics;
-	protected int arrowLen;
 	protected int maxQuantity;
 
 	public AbstractPanelRenderer(Graphics graphics, MyCoord coord, int quantity) {
@@ -92,11 +91,15 @@ public abstract class AbstractPanelRenderer {
 	}
 
 	public void paintLeader(int ballIdx) {
-		graphics.setColor(Color.red);
+		paintLeader(ballIdx, Color.red, "LEADER!!!");
+	}
+	
+	public void paintLeader(int ballIdx, Color color, String msg) {
+		graphics.setColor(color);
 		int oldArrSize = arrSize;
 		arrSize = 12;
 		graphics.setFont(new Font("Veranda", Font.BOLD, msgSize));
-		graphics.drawString("LEADER", xLeaderPos - 30, yLeaderPos);
+		graphics.drawString(msg, xLeaderPos - 30, yLeaderPos);
 		int xPos;
 		int yPos;
 		if (quantity == 1) {
@@ -149,10 +152,11 @@ public abstract class AbstractPanelRenderer {
 	
 	protected void drawArrow(int x1, int y1, int x2, int y2){
 		Graphics2D gr = (Graphics2D) graphics.create();
-
-		double dx = x2 - x1, dy = y2 - y1;
+		
+		double dx = x2 - x1;
+		double dy = y2 - y1;
 		double angle = Math.atan2(dy, dx);
-		arrowLen = (int) Math.sqrt(dx * dx + dy * dy) - diametr / 2;
+		int arrowLen = (int) Math.sqrt(dx * dx + dy * dy) - diametr / 2;
 		AffineTransform at = AffineTransform.getTranslateInstance(x1, y1);
 		at.concatenate(AffineTransform.getRotateInstance(angle));
 		gr.transform(at);
@@ -160,10 +164,8 @@ public abstract class AbstractPanelRenderer {
 		// Draw horizontal arrow starting in (0, 0)
 		gr.fillPolygon(new int[] { arrowLen, arrowLen - arrSize, arrowLen - arrSize, arrowLen },
 				new int[] { 0, -arrSize, arrSize, 0 }, 4);
-		gr.drawLine(0, 0, createArrowLen(), 0);
+		gr.drawLine(0, 0, arrowLen, 0);
 	}
-
-	protected abstract int createArrowLen();
 
 	protected void createLines(){
 		for (int i = 0; i < quantity; i++) {
@@ -180,5 +182,7 @@ public abstract class AbstractPanelRenderer {
 	protected abstract void drawLeftMsgs(int x1, int x2, int y1, int y2, String leftMsg);
 	
 	protected abstract void drawRightMsgs(int x1, int x2, int y1, int y2, String leftMsg);
+	
+	public abstract void drawCurrentLeaders(int ballIdx);
 
 }

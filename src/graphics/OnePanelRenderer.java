@@ -16,10 +16,6 @@ public class OnePanelRenderer extends AbstractPanelRenderer {
 		drawArrow(xStart, yStart, xEnd, yEnd);
 	}
 
-	protected int createArrowLen() {
-		return arrowLen;
-	}
-
 	protected void setRenderParameters() {
 		if (quantity < 10) {
 			setParametres(35, 10, 24, 20);
@@ -39,6 +35,10 @@ public class OnePanelRenderer extends AbstractPanelRenderer {
 
 	@Override
 	protected void drawRightMsgs(int x1, int x2, int y1, int y2, String leftMsg) {
+	}
+
+	@Override
+	public void drawCurrentLeaders(int ballIdx) {
 	}
 
 }
