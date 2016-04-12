@@ -10,7 +10,6 @@ import org.junit.runners.Suite.SuiteClasses;
     TestOneDirectSolver.class,
     TestBiDirectSolver.class,
     TestMyTrigonometry.class,
-    TestPanelRenderer.class
 })
 
 public class TestSuite {}
