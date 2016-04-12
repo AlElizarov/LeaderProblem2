@@ -24,7 +24,7 @@ public class OneDirectPanel extends MyAbstractPanel {
 	public void paintComponent(Graphics graphics) {
 		renderer = new OnePanelRenderer(graphics, quantity);
 		renderer.createFirstBar();
-		if (quantity >= 40) {
+		if (quantity > 39) {
 			return;
 		}
 		printCircle(graphics);
@@ -36,7 +36,7 @@ public class OneDirectPanel extends MyAbstractPanel {
 			Agent currentBall = solver.next();
 			graphics.setColor(Color.YELLOW);
 			if (solver.hasSolution()) {
-				printLeader(graphics, ballIdx+1, currentBall);
+				printLeader(graphics, ballIdx + 1, currentBall);
 			}
 
 			renderer.drawBalls(ballIdx + 1, "" + currentBall.getId());

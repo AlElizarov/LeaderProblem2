@@ -119,7 +119,7 @@ public class GUI {
 	}
 
 	public void setTextOnTextModeArea(String text) {
-		textAreaForTextMode.setText(text);
+		textAreaForTextMode.setText(textAreaForList.getText()+text);
 	}
 
 	private void setFrameParameters() {
@@ -375,6 +375,7 @@ public class GUI {
 			textAreaForTextMode.setContentType("text/html");
 			textAreaForTextMode.setText("<b>Располажение узлов:</b> " + solver
 					+ "<br>");
+			System.out.println(solver);
 		}
 
 		private void addListeners() {
