@@ -6,23 +6,34 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
-public class AbstractSolutionProgress<T, V> extends SwingWorker<T, V> implements
+public class SolutionProgress<T, V> extends SwingWorker<T, V> implements
 		ActionListener {
 
-	protected GUI gui;
-	protected ISolver solver;
-	protected StringBuffer textModeString = new StringBuffer();
-	protected int taskStep;
+	private GUI gui;
+	private ISolver solver;
+	private StringBuffer textModeString = new StringBuffer();
+	private int taskStep;
 
-	public AbstractSolutionProgress(ISolver solver, GUI gui) {
+	public SolutionProgress(SolutionProgress<T, V> progress) {
+		gui = progress.gui;
+		solver = progress.solver;
+		textModeString = progress.textModeString;
+		taskStep = progress.taskStep;
+	}
+
+	public SolutionProgress(ISolver solver, GUI gui) {
 		this.solver = solver;
 		this.gui = gui;
 	}
 
 	@Override
 	protected T doInBackground() throws Exception {
+		if (solver.hasSolution()) {
+			solver.initiateStartState();
+		}
 		while (!solver.hasSolution()) {
 			Thread.sleep(2000);
+			taskStep++;
 			solver.solve();
 			publish();
 		}
@@ -31,7 +42,6 @@ public class AbstractSolutionProgress<T, V> extends SwingWorker<T, V> implements
 
 	@Override
 	protected void process(List<V> chunks) {
-		taskStep++;
 		if (firstRound()) {
 			setFirstMsgsRound();
 		}
@@ -43,7 +53,6 @@ public class AbstractSolutionProgress<T, V> extends SwingWorker<T, V> implements
 	protected void done() {
 		if (solver.hasSolution()) {
 			setLeaderId();
-			solver.initiateStartState();
 		}
 		gui.updateFrame();
 		gui.setButtonsVisibility(true, true, true, false);
@@ -53,15 +62,16 @@ public class AbstractSolutionProgress<T, V> extends SwingWorker<T, V> implements
 	public void actionPerformed(ActionEvent e) {
 		taskStep++;
 		if (solver.hasSolution()) {
-			setLeaderId();
 			solver.initiateStartState();
 		}
-
 		if (firstRound()) {
 			setFirstMsgsRound();
 		}
 		solver.solve();
 		appendMsgs();
+		if (solver.hasSolution()) {
+			setLeaderId();
+		}
 		gui.updateFrame();
 	}
 
@@ -74,11 +84,11 @@ public class AbstractSolutionProgress<T, V> extends SwingWorker<T, V> implements
 		textModeString.append("<b><font size = 6>À»ƒ≈– Õ¿…ƒ≈Õ!!! Id ÎË‰Â‡: "
 				+ leaderId + "</font></b><br>");
 		gui.setTextOnTextModeArea(textModeString.toString());
-		taskStep = 1;
+		taskStep = 0;
 	}
 
 	protected void appendMsgs() {
-		textModeString.append("<b>ÿ‡„ " + taskStep + ":</b> "
+		textModeString.append("<b>ÿ‡„ " + (taskStep) + ":</b> "
 				+ solver.printMsgs() + "<br>");
 		gui.setTextOnTextModeArea(textModeString.toString());
 	}
