@@ -44,7 +44,7 @@ public class GUI {
 
 	private JSplitPane rightSplit;
 	private MyAbstractPanel panelWithPicture;
-	private AbstractSolutionProgress<Void, Void> progress;
+	private SolutionProgress<Void, Void> progress;
 
 	private JButton setup;
 	private JButton stepButtop;
@@ -308,6 +308,7 @@ public class GUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				progress = new SolutionProgress<>(progress);
 				setButtonsVisibility(false, false, false, true);
 				progress.execute();
 			}
@@ -429,7 +430,7 @@ public class GUI {
 			} else {
 				solver = creteBiDirectMode();
 			}
-			progress = new AbstractSolutionProgress<>(solver, GUI.this);
+			progress = new SolutionProgress<>(solver, GUI.this);
 			return solver;
 		}
 
