@@ -1,11 +1,9 @@
 package graphics;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 
 import algorithm.Agent;
-import algorithm.BiDirectSolver;
 
 public class BiDirectPanel extends MyAbstractPanel {
 
@@ -15,211 +13,96 @@ public class BiDirectPanel extends MyAbstractPanel {
 	private static final long serialVersionUID = 1L;
 
 	private BiDirectSolvable solver;
-	private int xLeaderPos;
-	private int yLeaderPos;
-	private boolean nextStepGetLeader;
-	private int stepBeforeLeader;
-	private int leaderPos = -1;
-	private int biDirectStep;
-	private int stage;
+	private int quantity;
+	private AbstractPanelRenderer renderer;
 
 	public BiDirectPanel(BiDirectSolvable solver, int quantity) {
 		this.solver = solver;
-		setQuantity(quantity);
+		this.quantity = quantity;
 	}
 
 	public void paintComponent(Graphics graphics) {
-		xLeaderPos = roundCenterX;
-		yLeaderPos = roundCenterY;
-		if (quantity == 2 || quantity == 1) {
-			yLeaderPos -= 100;
-		}
-		if (quantity >= 20) {
-			graphics.setFont(new Font("Veranda", Font.ITALIC, 26));
-			graphics.drawString("    Визуальный режим доступен ", 100, 150);
-			graphics.drawString("только при объеме входных", 100, 190);
-			graphics.drawString("данных больше 20 в двунаправленном", 100, 230);
-			graphics.drawString("режиме. Вы можете продолжить", 100, 270);
-			graphics.drawString("работу в текстовом режиме", 100, 310);
+		renderer = new BiPanelRenderer(graphics, quantity);
+		renderer.createFirstBar();
+		if (quantity > 19) {
 			return;
 		}
-		if (quantity == 2) {
-			ARR_SIZE = 8;
-			drawArrow(graphics, newCoordX(1), newCoordY(1), newCoordX(2),
-					newCoordY(2), true);
-			drawArrow(graphics, newCoordX(2), newCoordY(2), newCoordX(1),
-					newCoordY(1), false);
-		} else {
-			if (quantity != 1) {
-				createLines(graphics, true);
-			}
-		}
 		int ballIdx = 0;
-		// System.out.println("LS in gui" + list.getLeftSenders());
-		if (stage == 0 && biDirectStep == 1) {
-			stepBeforeLeader = 0;
-			nextStepGetLeader = false;
-			leaderPos = -1;
-		}
 		while (solver.hasNext()) {
 			Agent currentBall = solver.next();
+			graphics.setColor(Color.YELLOW);
+
 			if (quantity == 1) {
-				if ((stage == 0 && biDirectStep == 0)
-						|| (stage == 1 && biDirectStep == 0)) {
-					graphics.setColor(Color.YELLOW);
-					drawBalls(graphics, roundCenterX, roundCenterY, currentBall);
-					continue;
-				}
-				if (stage == 0 && biDirectStep == 1) {
-					graphics.setColor(Color.RED);
-					drawBalls(graphics, roundCenterX, roundCenterY, currentBall);
-					graphics.setColor(Color.RED);
-					graphics.drawString("LEADER", xLeaderPos - 30, yLeaderPos);
-					graphics.setColor(Color.RED);
-					drawArrow(graphics, xLeaderPos, yLeaderPos, roundCenterX,
-							roundCenterY, true);
-					continue;
-				}
-			}
-			if (nextStepGetLeader && biDirectStep != stepBeforeLeader) {
-				graphics.setColor(Color.red);
-				int oldArrSize = ARR_SIZE;
-				ARR_SIZE = 12;
-				graphics.setFont(new Font("Veranda", Font.BOLD, msgSize));
-				graphics.drawString("LEADER", xLeaderPos - 30, yLeaderPos);
-
-				drawArrow(graphics, xLeaderPos, yLeaderPos,
-						newCoordX(leaderPos + 1), newCoordY(leaderPos + 1),
-						true);
-
-				nextStepGetLeader = false;
-				// leaderPos = -1;
-				// stepBeforeLeader = 0;
-				ARR_SIZE = oldArrSize;
-				drawBalls(graphics, newCoordX(ballIdx + 1),
-						newCoordY(ballIdx + 1), currentBall);
-			}
-			if (ballIdx == leaderPos) {
-				graphics.setColor(Color.RED);
-				// leaderPos = -1;
-				drawBalls(graphics, newCoordX(ballIdx + 1),
-						newCoordY(ballIdx + 1), currentBall);
-
-			}
-			if (solver.getCurrentLeaders().contains(ballIdx)) {
-
-				graphics.setColor(Color.BLUE);
-
-				if (solver.get(ballIdx).getId() == solver.get(ballIdx - 1)
-						.getLeftMsg()) {
-					// graphics.setColor(Color.red);
-					// int oldArrSize = ARR_SIZE;
-					// ARR_SIZE = 12;
-					// graphics.setFont(new Font("Veranda", Font.BOLD,
-					// msgSize));
-					// graphics.drawString("LEADER", xLeaderPos - 30,
-					// yLeaderPos);
-					nextStepGetLeader = true;
-					stepBeforeLeader = biDirectStep;
-					leaderPos = ballIdx;
-				}
-
-			} else {
-				if (ballIdx != leaderPos) {
-					graphics.setColor(Color.YELLOW);
-				}
-			}
-			if (stage == 0 && (biDirectStep == 1 || biDirectStep == 0)) {
-				if (ballIdx != leaderPos)
-					graphics.setColor(Color.YELLOW);
-				else {
-					graphics.setColor(Color.RED);
-				}
+				continue;
 			}
 
-			drawBalls(graphics, newCoordX(ballIdx + 1), newCoordY(ballIdx + 1),
-					currentBall);
-			// if(biDirectStep == Math.pow(2, stage)){
-			// System.out.println("yes");
-			// }
-			// System.out.println("stage, step"+stage+" "+biDirectStep);
-			if (biDirectStep == 0 && stage != 0) {
-				graphics.setColor(Color.BLUE);
-				int oldArrSize = ARR_SIZE;
-				ARR_SIZE = 12;
-				graphics.setFont(new Font("Veranda", Font.BOLD, msgSize));
-				graphics.drawString("CURRENT LEADERS", xLeaderPos - 30,
-						yLeaderPos);
-				if (solver.getCurrentLeaders().contains(ballIdx)) {
-					drawArrow(graphics, xLeaderPos, yLeaderPos,
-							newCoordX(ballIdx + 1), newCoordY(ballIdx + 1),
-							true);
-				}
-				ARR_SIZE = oldArrSize;
+			if (solver.hasSolution()) {
+				printLeader(graphics, ballIdx, currentBall);
+			}
+
+			if (solver.getCurrentLeaders().contains(ballIdx) && solver.getStep() == 0) {
+				renderer.drawCurrentLeaders(ballIdx + 1);
+			}
+
+			renderer.drawBalls(ballIdx, "" + currentBall.getId());
+			if(solver.getStep() == 0){
 				ballIdx++;
 				continue;
 			}
 
 			if (solver.getLeftSenders().contains(ballIdx)) {
-				if (biDirectStep != 0 || stage != 0) {
-					if (stage == 0) {
-						if (quantity != 2) {
-							drawLeftMsgs(graphics, newCoordX(ballIdx),
-									newCoordX(ballIdx + 1), newCoordY(ballIdx),
-									newCoordY(ballIdx + 1), currentBall);
-						} else {
-							drawLeftMsgs(graphics, newCoordX(ballIdx) - 20,
-									newCoordX(ballIdx + 1) - 20,
-									newCoordY(ballIdx), newCoordY(ballIdx + 1),
-									currentBall);
-						}
+				if (quantity != 2) {
+					if (solver.getStep() == 1) {
+						renderer.drawLeftMsgs(renderer.newCoordX(ballIdx),
+								renderer.newCoordX(ballIdx + 1),
+								renderer.newCoordY(ballIdx),
+								renderer.newCoordY(ballIdx + 1), ""
+										+ currentBall.getId());
 					} else {
-						if (quantity != 2) {
-							drawLeftMsgs(graphics, newCoordX(ballIdx + 1),
-									newCoordX(ballIdx + 2),
-									newCoordY(ballIdx + 1),
-									newCoordY(ballIdx + 2), currentBall);
-						} else {
-							drawLeftMsgs(graphics, newCoordX(ballIdx) - 20,
-									newCoordX(ballIdx + 1) - 20,
-									newCoordY(ballIdx), newCoordY(ballIdx + 1),
-									currentBall);
-						}
+						renderer.drawLeftMsgs(renderer.newCoordX(ballIdx),
+								renderer.newCoordX(ballIdx + 1),
+								renderer.newCoordY(ballIdx),
+								renderer.newCoordY(ballIdx + 1), ""
+										+ currentBall.getLeftMsg());
 					}
+				} else {
+					drawLeftMsgs(graphics, newCoordX(ballIdx) - 20,
+							newCoordX(ballIdx + 1) - 20, newCoordY(ballIdx),
+							newCoordY(ballIdx + 1), currentBall);
 				}
 			}
-
 			if (solver.getRightSenders().contains(ballIdx)) {
-				if (biDirectStep != 0 || stage != 0) {
-					if (stage == 0) {
-						if (quantity != 2) {
-							drawRightMsgs(graphics, newCoordX(ballIdx + 1),
-									newCoordX(ballIdx + 2),
-									newCoordY(ballIdx + 1),
-									newCoordY(ballIdx + 2), currentBall);
-						} else {
-							drawRightMsgs(graphics,
-									newCoordX(ballIdx + 1) + 20,
-									newCoordX(ballIdx + 2) + 20,
-									newCoordY(ballIdx + 1),
-									newCoordY(ballIdx + 2), currentBall);
-						}
+				if (quantity != 2) {
+					if (solver.getStep() == 1) {
+						renderer.drawRightMsgs(renderer.newCoordX(ballIdx-1),
+								renderer.newCoordX(ballIdx),
+								renderer.newCoordY(ballIdx-1),
+								renderer.newCoordY(ballIdx),
+								"" + currentBall.getId());
 					} else {
-						if (quantity != 2) {
-							drawRightMsgs(graphics, newCoordX(ballIdx),
-									newCoordX(ballIdx + 1), newCoordY(ballIdx),
-									newCoordY(ballIdx + 1), currentBall);
-						} else {
-							drawRightMsgs(graphics, newCoordX(ballIdx) + 20,
-									newCoordX(ballIdx + 1) + 20,
-									newCoordY(ballIdx), newCoordY(ballIdx + 1),
-									currentBall);
-						}
+						renderer.drawRightMsgs(renderer.newCoordX(ballIdx-1),
+								renderer.newCoordX(ballIdx),
+								renderer.newCoordY(ballIdx-1),
+								renderer.newCoordY(ballIdx),
+								"" + currentBall.getRightMsg());
 					}
+				} else {
+					renderer.drawRightMsgs(renderer.newCoordX(ballIdx) + 20,
+							renderer.newCoordX(ballIdx + 1) + 20,
+							renderer.newCoordY(ballIdx),
+							renderer.newCoordY(ballIdx + 1),
+							"" + currentBall.getRightMsg());
 				}
 			}
-
 			ballIdx++;
+		}
+	}
+
+	private void printLeader(Graphics graphics, int ballIdx, Agent currentBall) {
+		if (currentBall.getLeftMsg() != currentBall.getId()) {
+			graphics.setColor(Color.YELLOW);
+		} else {
+			renderer.paintLeader(ballIdx);
 		}
 	}
 

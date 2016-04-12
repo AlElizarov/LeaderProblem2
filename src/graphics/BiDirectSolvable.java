@@ -14,4 +14,8 @@ public interface BiDirectSolvable extends ISolver {
 
 	Agent get(int idx);
 
+	public int getStep();
+
+	public double getStage();
+
 }
