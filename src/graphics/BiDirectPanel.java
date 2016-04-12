@@ -13,12 +13,20 @@ public class BiDirectPanel extends MyAbstractPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private BiDirectSolvable solver;
 	private int xLeaderPos;
 	private int yLeaderPos;
 	private boolean nextStepGetLeader;
 	private int stepBeforeLeader;
 	private int leaderPos = -1;
-	private  BiDirectSolver solver;
+	private int biDirectStep;
+	private int stage;
+
+	public BiDirectPanel(BiDirectSolvable solver, int quantity) {
+		this.solver = solver;
+		setQuantity(quantity);
+	}
 
 	public void paintComponent(Graphics graphics) {
 		xLeaderPos = roundCenterX;
@@ -53,15 +61,16 @@ public class BiDirectPanel extends MyAbstractPanel {
 			nextStepGetLeader = false;
 			leaderPos = -1;
 		}
-		while (list.hasNext()) {
-			Agent currentBall = list.next();
-			if(quantity == 1){
-				if((stage == 0 && biDirectStep == 0) || (stage == 1 && biDirectStep == 0)){
+		while (solver.hasNext()) {
+			Agent currentBall = solver.next();
+			if (quantity == 1) {
+				if ((stage == 0 && biDirectStep == 0)
+						|| (stage == 1 && biDirectStep == 0)) {
 					graphics.setColor(Color.YELLOW);
 					drawBalls(graphics, roundCenterX, roundCenterY, currentBall);
 					continue;
 				}
-				if(stage == 0 && biDirectStep == 1){
+				if (stage == 0 && biDirectStep == 1) {
 					graphics.setColor(Color.RED);
 					drawBalls(graphics, roundCenterX, roundCenterY, currentBall);
 					graphics.setColor(Color.RED);
@@ -78,11 +87,11 @@ public class BiDirectPanel extends MyAbstractPanel {
 				ARR_SIZE = 12;
 				graphics.setFont(new Font("Veranda", Font.BOLD, msgSize));
 				graphics.drawString("LEADER", xLeaderPos - 30, yLeaderPos);
-				
-					drawArrow(graphics, xLeaderPos, yLeaderPos,
-							newCoordX(leaderPos + 1), newCoordY(leaderPos + 1),
-							true);
-				
+
+				drawArrow(graphics, xLeaderPos, yLeaderPos,
+						newCoordX(leaderPos + 1), newCoordY(leaderPos + 1),
+						true);
+
 				nextStepGetLeader = false;
 				// leaderPos = -1;
 				// stepBeforeLeader = 0;
@@ -101,14 +110,8 @@ public class BiDirectPanel extends MyAbstractPanel {
 
 				graphics.setColor(Color.BLUE);
 
-				int loopEnd = (int) (Math.log(list.size()) / Math.log(2));
-				if ((list.size() & (list.size() - 1)) != 0) {
-					loopEnd += 1;
-				}
-				if (list.get(ballIdx).getId() == list.get(ballIdx - 1)
-						.getLeftMsg()
-						&& stage == loopEnd
-						&& biDirectStep == list.size() - 1) {
+				if (solver.get(ballIdx).getId() == solver.get(ballIdx - 1)
+						.getLeftMsg()) {
 					// graphics.setColor(Color.red);
 					// int oldArrSize = ARR_SIZE;
 					// ARR_SIZE = 12;
@@ -134,7 +137,6 @@ public class BiDirectPanel extends MyAbstractPanel {
 				}
 			}
 
-			
 			drawBalls(graphics, newCoordX(ballIdx + 1), newCoordY(ballIdx + 1),
 					currentBall);
 			// if(biDirectStep == Math.pow(2, stage)){

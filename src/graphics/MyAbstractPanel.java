@@ -9,24 +9,23 @@ import java.awt.geom.AffineTransform;
 import javax.swing.JPanel;
 
 import algorithm.Agent;
-import algorithm.RingArrayList;
+import data.RingArrayList;
 
-public class MyAbstractPanel extends JPanel {
+public abstract class MyAbstractPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	protected int quantity;
-	protected int roundCenterX = 350;
-	protected int roundCenterY = 300;
-	private int radius = 270;
+	protected final int roundCenterX = 350;
+	protected final int roundCenterY = 300;
+	private final int radius = 270;
 	private int width;
 	private int height;
 	protected int ARR_SIZE;
 	protected int msgSize;
 	private int ballSize;
-	protected RingArrayList list;
-	protected int taskStep;
-	protected int stage;
-	protected int biDirectStep;
+
+	public MyAbstractPanel() {
+	}
 
 	protected void drawBalls(Graphics graphics, int xPos, int yPos,
 			Agent currentBall) {
@@ -46,9 +45,9 @@ public class MyAbstractPanel extends JPanel {
 		graphics.drawString("" + currentBall.getNewLeftMsg(), lineCenterX,
 				lineCenterY);
 	}
-	
-	protected void drawLeftMsgs(Graphics graphics, int x1, int x2, int y1, int y2,
-			Agent currentBall) {
+
+	protected void drawLeftMsgs(Graphics graphics, int x1, int x2, int y1,
+			int y2, Agent currentBall) {
 		graphics.setColor(Color.RED);
 		graphics.setFont(new Font("Veranda", Font.BOLD, msgSize));
 		int lineCenterX = (x1 + x2) / 2;
@@ -58,9 +57,9 @@ public class MyAbstractPanel extends JPanel {
 		graphics.drawString("" + currentBall.getLeftMsg(), lineCenterX,
 				lineCenterY);
 	}
-	
-	protected void drawRightMsgs(Graphics graphics, int x1, int x2, int y1, int y2,
-			Agent currentBall) {
+
+	protected void drawRightMsgs(Graphics graphics, int x1, int x2, int y1,
+			int y2, Agent currentBall) {
 		graphics.setColor(new Color(0, 100, 0));
 		graphics.setFont(new Font("Veranda", Font.BOLD, msgSize));
 		int lineCenterX = (x1 + x2) / 2;
@@ -125,8 +124,8 @@ public class MyAbstractPanel extends JPanel {
 		return (int) (roundCenterY + radius * mySin(idx * (360.0 / quantity)));
 	}
 
-	public void setQuantity(int q) {
-		quantity = q;
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
 		if (quantity < 10) {
 			setParametres(35, 10, 24, 20);
 		} else if (quantity < 20) {
@@ -143,22 +142,6 @@ public class MyAbstractPanel extends JPanel {
 		ARR_SIZE = Arr_size;
 		msgSize = msg_size;
 		ballSize = ball_size;
-	}
-
-	public void setList(RingArrayList list2) {
-		this.list = list2;
-	}
-
-	public void setStep(int step) {
-		this.taskStep = step;
-	}
-
-	public void setStage(int stage) {
-		this.stage = stage;
-	}
-
-	public void setBiDirectStep(int step) {
-		biDirectStep = step;
 	}
 
 }
