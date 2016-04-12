@@ -14,7 +14,7 @@ public class OneDirectPanel extends MyAbstractPanel {
 
 	private OneDirectSolvable solver;
 	private int quantity;
-	private AbstractMode mode;
+	private AbstractPanelRenderer renderer;
 
 	public OneDirectPanel(OneDirectSolvable solver, int quantity) {
 		this.solver = solver;
@@ -22,8 +22,8 @@ public class OneDirectPanel extends MyAbstractPanel {
 	}
 
 	public void paintComponent(Graphics graphics) {
-		setMode(graphics);
-		mode.createFirstBar();
+		renderer = new OnePanelRenderer(graphics, quantity);
+		renderer.createFirstBar();
 		if (quantity >= 40) {
 			return;
 		}
@@ -36,16 +36,16 @@ public class OneDirectPanel extends MyAbstractPanel {
 			Agent currentBall = solver.next();
 			graphics.setColor(Color.YELLOW);
 			if (solver.hasSolution()) {
-				printLeader(graphics, ballIdx, currentBall);
+				printLeader(graphics, ballIdx+1, currentBall);
 			}
-			
-			mode.drawBalls(currentBall, ballIdx);
+
+			renderer.drawBalls(ballIdx + 1, "" + currentBall.getId());
 			if (quantity == 1) {
 				continue;
 			}
 
 			if (currentBall.getLeftMsg() > 0) {
-				mode.drawMsgs(currentBall, ballIdx);
+				renderer.drawMsgs(ballIdx, "" + currentBall.getLeftMsg());
 			}
 			ballIdx++;
 		}
@@ -55,19 +55,7 @@ public class OneDirectPanel extends MyAbstractPanel {
 		if (currentBall.getLeftMsg() != currentBall.getId()) {
 			graphics.setColor(Color.YELLOW);
 		} else {
-			mode.paintLeader(ballIdx);
-		}
-	}
-
-	public void setMode(Graphics graphics) {
-		if (quantity == 1) {
-			mode = new OneVariableMode(graphics, quantity);
-		} else if (quantity == 2) {
-			mode = new TwoVariableMode(graphics, quantity);
-		} else if (quantity < 40) {
-			mode = new FourtyVariableMode(graphics, quantity);
-		} else {
-			mode = new ManyVariableMode(graphics, quantity);
+			renderer.paintLeader(ballIdx);
 		}
 	}
 
