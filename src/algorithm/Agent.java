@@ -8,6 +8,10 @@ public class Agent {
 	private int newLeftMsg;
 	private int newRightMsg;
 	private boolean leftOk;
+	
+	public Agent(int id) {
+		this.id = id;
+	}
 
 	public boolean isLeftOk() {
 		return leftOk;
@@ -17,16 +21,8 @@ public class Agent {
 		this.leftOk = leftOk;
 	}
 
-	public int getNewLeftMsg() {
-		return newLeftMsg;
-	}
-
 	public void setNewLeftMsg(int newLeftMsg) {
 		this.newLeftMsg = newLeftMsg;
-	}
-
-	public int getNewRightMsg() {
-		return newRightMsg;
 	}
 
 	public void setNewRightMsg(int newRightMsg) {
@@ -49,10 +45,6 @@ public class Agent {
 		this.rightMsg = rghtMsg;
 	}
 
-	public Agent(int id) {
-		this.id = id;
-	}
-
 	public int getId() {
 		return id;
 	}
@@ -61,7 +53,7 @@ public class Agent {
 		leftMsg = newLeftMsg;
 	}
 
-	public void updateRighttMsgs() {
+	public void updateRightMsgs() {
 		rightMsg = newRightMsg;
 	}
 
