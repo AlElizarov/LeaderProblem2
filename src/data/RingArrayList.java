@@ -14,14 +14,17 @@ public class RingArrayList implements DataForLeaderElecionKeepable {
 	private Agent[] arr = new Agent[1];
 	private int index = 0;
 
+	@Override
 	public boolean isEmpty() {
 		return size == 0;
 	}
 
+	@Override
 	public int size() {
 		return size;
 	}
 
+	@Override
 	public void add(Agent agent) {
 		if (agent.getId() <= 0) {
 			throw new NonPositiveValueException("Отрицательное значение: "
@@ -35,6 +38,7 @@ public class RingArrayList implements DataForLeaderElecionKeepable {
 		arr[size++] = agent;
 	}
 
+	@Override
 	public void addAll(Agent[] data) {
 		int len = data.length;
 		int[] idata = new int[len];
@@ -44,6 +48,7 @@ public class RingArrayList implements DataForLeaderElecionKeepable {
 		addAll(idata);
 	}
 
+	@Override
 	public Agent next() {
 		if (size == 0) {
 			throw new NoSuchElementException();
@@ -54,6 +59,7 @@ public class RingArrayList implements DataForLeaderElecionKeepable {
 		return arr[index++];
 	}
 
+	@Override
 	public boolean hasNext() {
 		if (index >= size) {
 			index = 0;
@@ -73,6 +79,7 @@ public class RingArrayList implements DataForLeaderElecionKeepable {
 		return arr[index];
 	}
 
+	@Override
 	public Agent get(int i) {
 		if (size == 0) {
 			throw new NoSuchElementException();
@@ -105,7 +112,7 @@ public class RingArrayList implements DataForLeaderElecionKeepable {
 	@Override
 	public void add(String item) {
 		try {
-			add(Integer.parseInt(item));
+			add(Integer.parseInt(item.trim()));
 		} catch (NumberFormatException exc) {
 			throw new FormatException("Неверный формат: " + item);
 		}
@@ -128,7 +135,7 @@ public class RingArrayList implements DataForLeaderElecionKeepable {
 		int[] idata = new int[len];
 		for (int i = 0; i < len; i++) {
 			try {
-				idata[i] = Integer.parseInt(data[i]);
+				idata[i] = Integer.parseInt(data[i].trim());
 			} catch (NumberFormatException exc) {
 				throw new FormatException("Неверный формат: " + data[i]);
 			}
