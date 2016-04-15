@@ -33,6 +33,7 @@ public abstract class AbstractRenderer implements IRenderer {
 		this(new Center(350, 300, 270), quantity);
 	}
 
+	@Override
 	public void setGraphics(Graphics graphics) {
 		this.graphics = graphics;
 	}
@@ -57,6 +58,7 @@ public abstract class AbstractRenderer implements IRenderer {
 		return coordCenter.calculateYPos(quantity, idx);
 	}
 
+	@Override
 	public void createFirstBar() {
 		if (quantity == 2) {
 			createFirstBarForTwo();
@@ -104,10 +106,12 @@ public abstract class AbstractRenderer implements IRenderer {
 		drawArrow(createSegment(xStart, xEnd, yStart, yEnd));
 	}
 
+	@Override
 	public void paintLeader(int ballIdx) {
 		paintLeader(ballIdx, Color.red, "LEADER!!!");
 	}
 
+	@Override
 	public void paintLeader(int ballIdx, Color color, String msg) {
 		graphics.setColor(color);
 		int oldArrSize = arrSize;
@@ -138,6 +142,7 @@ public abstract class AbstractRenderer implements IRenderer {
 		return xCoordBall(ballIdx);
 	}
 
+	@Override
 	public void drawBalls(int ballIdx, String ballTitle) {
 		int xPos = calculateXPos(ballIdx);
 		int yPos = calculateYPos(ballIdx);

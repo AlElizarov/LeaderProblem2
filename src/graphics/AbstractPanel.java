@@ -9,9 +9,6 @@ import algorithm.Agent;
 
 public abstract class AbstractPanel extends JPanel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private IRenderer renderer;
 	private ISolver solver;
@@ -24,6 +21,7 @@ public abstract class AbstractPanel extends JPanel {
 		this.quantity = quantity;
 	}
 
+	@Override
 	public void paintComponent(Graphics graphics) {
 		renderer.setGraphics(graphics);
 		renderer.createFirstBar();

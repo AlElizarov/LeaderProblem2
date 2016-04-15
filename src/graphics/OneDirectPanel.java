@@ -7,9 +7,6 @@ import algorithm.OneDirectSolver;
 
 public class OneDirectPanel extends AbstractPanel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private OneDirectSolver solver;

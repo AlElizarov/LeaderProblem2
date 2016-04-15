@@ -16,6 +16,7 @@ public class BiDirectRenderer extends AbstractRenderer implements
 		super(coord, quantity);
 	}
 
+	@Override
 	public void drawLeftMsgs(int ballIdx, String leftMsg) {
 		int x1 = xCoordBall(ballIdx);
 		int x2 = xCoordBall(ballIdx + 1);
@@ -32,6 +33,7 @@ public class BiDirectRenderer extends AbstractRenderer implements
 		graphics.drawString(leftMsg, lineCenterX, lineCenterY);
 	}
 
+	@Override
 	public void drawRightMsgs(int ballIdx, String rightMsg) {
 		int x1 = xCoordBall(ballIdx - 1);
 		int x2 = xCoordBall(ballIdx);
@@ -68,6 +70,7 @@ public class BiDirectRenderer extends AbstractRenderer implements
 		drawArrow(segment.turnBack());
 	}
 
+	@Override
 	public void drawCurrentLeaders(int ballIdx) {
 		paintLeader(ballIdx, Color.BLUE, "CURRENT LEADER");
 	}
