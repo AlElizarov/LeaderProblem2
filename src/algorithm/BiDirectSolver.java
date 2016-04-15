@@ -17,9 +17,10 @@ public class BiDirectSolver extends Solver implements BiDirectSolvable {
 	private List<Integer> rightRequesters;
 	private List<Integer> leftRequesters;
 
+	@Override
 	public void solve() {
 		if (stage == 0 && step == 0) {
-			initiateStartState();
+			afterStart();
 		}
 		if (step == 0) {
 			initiateSenders();
@@ -38,13 +39,29 @@ public class BiDirectSolver extends Solver implements BiDirectSolvable {
 		}
 	}
 
+	@Override
 	public int getStep() {
 		return step;
 	}
 
+	@Override
 	public void initiateStartState() {
-		step = 0;
 		stage = 0;
+		step = 0;
+		resetRightMsgs();
+		currentLeaders = new ArrayList<>();
+	}
+	
+	private void resetRightMsgs() {
+		for(int i = 0; i < list.size(); i++){
+			list.get(i).setRightMsg(0);
+			list.get(i).setNewRightMsg(0);
+			list.get(i).setLeftMsg(0);
+			list.get(i).setNewLeftMsg(0);
+		}
+	}
+
+	private void afterStart() {
 		currentLeaders = new ArrayList<>();
 		for (int i = 0; i < list.size(); i++) {
 			currentLeaders.add(i);
@@ -88,7 +105,7 @@ public class BiDirectSolver extends Solver implements BiDirectSolvable {
 		Agent rightRecepient;
 		for (int i = 0; i < rightSendersIndexes.size(); i++) {
 			rightRecepient = list.get(rightSendersIndexes.get(i) - 1);
-			rightRecepient.updateRighttMsgs();
+			rightRecepient.updateRightMsgs();
 		}
 	}
 
@@ -198,6 +215,7 @@ public class BiDirectSolver extends Solver implements BiDirectSolvable {
 			leftRecepient = list.get(leftRecepientIdx);
 			rightSender = list.get(leftRecepientIdx + 1);
 			leftRecepient.setNewRightMsg(rightSender.getRightMsg());
+			rightSender.updateRightMsgs();
 		}
 	}
 
@@ -248,18 +266,22 @@ public class BiDirectSolver extends Solver implements BiDirectSolvable {
 		}
 	}
 
+	@Override
 	public List<Integer> getLeftSenders() {
 		return leftSendersIndexes;
 	}
 
+	@Override
 	public List<Integer> getRightSenders() {
 		return rightSendersIndexes;
 	}
 
+	@Override
 	public List<Integer> getCurrentLeaders() {
 		return currentLeaders;
 	}
 
+	@Override
 	public String printMsgs() {
 		String result = "";
 
