@@ -43,7 +43,7 @@ public class GUI {
 	private JFrame frame;
 
 	private JSplitPane rightSplit;
-	private MyAbstractPanel panelWithPicture;
+	private AbstractPanel panelWithPicture;
 	private SolutionProgress<Void, Void> progress;
 
 	private JButton setup;
@@ -119,7 +119,7 @@ public class GUI {
 	}
 
 	public void setTextOnTextModeArea(String text) {
-		textAreaForTextMode.setText(textAreaForList.getText()+text);
+		textAreaForTextMode.setText(textAreaForList.getText() + text);
 	}
 
 	private void setFrameParameters() {
@@ -159,8 +159,6 @@ public class GUI {
 	}
 
 	private void setSplitParameters() {
-		rightSplit.setDividerLocation(0.9);
-		rightSplit.setResizeWeight(0.95);
 		rightSplit.setVisible(false);
 	}
 
@@ -347,6 +345,7 @@ public class GUI {
 				if (quantity <= 0) {
 					showErrorMsg("Размер задачи должен быть положительным числом");
 					quantityField.setText("");
+					quantityField.requestFocus();
 					return;
 				}
 			} catch (Exception exc) {
@@ -390,18 +389,17 @@ public class GUI {
 				solver.addAll(items);
 			} catch (NonPositiveValueException exc) {
 				showErrorMsg("Некорректное значение: "
-						+ "Элементы должны быть больше нуля");
+						+ exc.getMessage()+". Элементы должны быть больше нуля");
 				textAreaForList.requestFocus();
-				textAreaForList.setText("");
 				return false;
 			} catch (DuplicateValueException exc) {
 				showErrorMsg("Некорректный значение: "
-						+ "Не должно быть повторяющихся элементов");
+						+ exc.getMessage()+". Не должно быть повторяющихся элементов");
 				textAreaForList.requestFocus();
 				return false;
 			} catch (FormatException exc) {
 				showErrorMsg("Некорректный формат ввода: "
-						+ "Пожалуйста, вводите только целые числа");
+						+ exc.getMessage()+ ". Пожалуйста, вводите только целые числа ");
 				textAreaForList.requestFocus();
 				return false;
 			}
@@ -418,9 +416,11 @@ public class GUI {
 			if (exc.getMessage().equals("For input string: \"\"")) {
 				showErrorMsg("Пожалуйста введите размер задачи");
 				quantityField.setText("");
+				quantityField.requestFocus();
 			} else {
 				showErrorMsg("Некорректный ввод: Пожалуйста введите целое число");
 				quantityField.setText("");
+				quantityField.requestFocus();
 			}
 		}
 
@@ -436,14 +436,34 @@ public class GUI {
 		}
 
 		private ISolver creteBiDirectMode() {
+			if(quantity > 19){
+				rightSplit.setDividerLocation(0.5);
+				rightSplit.setResizeWeight(0.5);
+			}
+			else{
+				rightSplit.setDividerLocation(0.9);
+				rightSplit.setResizeWeight(0.95);
+			}
 			BiDirectSolvable biDirectSolver = new BiDirectSolver();
-			panelWithPicture = new BiDirectPanel(biDirectSolver, quantity);
+			BiDirectRendable renderer = new BiDirectRenderer(quantity);
+			panelWithPicture = new BiDirectPanel(biDirectSolver, quantity,
+					renderer);
 			return biDirectSolver;
 		}
 
 		private ISolver createOneDirectMode() {
-			OneDirectSolvable oneDirectSolver = new OneDirectSolver();
-			panelWithPicture = new OneDirectPanel(oneDirectSolver, quantity);
+			if(quantity > 39){
+				rightSplit.setDividerLocation(0.5);
+				rightSplit.setResizeWeight(0.5);
+			}
+			else{
+				rightSplit.setDividerLocation(0.9);
+				rightSplit.setResizeWeight(0.95);
+			}
+			OneDirectSolver oneDirectSolver = new OneDirectSolver();
+			OneDirectRendable renderer = new OneDirectRenderer(quantity);
+			panelWithPicture = new OneDirectPanel(oneDirectSolver, quantity,
+					renderer);
 			return oneDirectSolver;
 		}
 
