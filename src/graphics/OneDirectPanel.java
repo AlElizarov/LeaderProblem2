@@ -1,62 +1,46 @@
 package graphics;
 
-import java.awt.Color;
 import java.awt.Graphics;
 
 import algorithm.Agent;
+import algorithm.OneDirectSolver;
 
-public class OneDirectPanel extends MyAbstractPanel {
+public class OneDirectPanel extends AbstractPanel {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private OneDirectSolvable solver;
-	private int quantity;
-	private AbstractPanelRenderer renderer;
+	private OneDirectSolver solver;
+	private OneDirectRendable renderer;
 
-	public OneDirectPanel(OneDirectSolvable solver, int quantity) {
+	public OneDirectPanel(OneDirectSolver solver, int quantity,
+			OneDirectRendable renderer) {
+		super(renderer, solver, quantity);
 		this.solver = solver;
-		this.quantity = quantity;
+		this.renderer = renderer;
+		maxQuantity = 39;
 	}
 
-	public void paintComponent(Graphics graphics) {
-		renderer = new OnePanelRenderer(graphics, quantity);
-		renderer.createFirstBar();
-		if (quantity > 39) {
-			return;
-		}
-		printCircle(graphics);
-	}
-
-	private void printCircle(Graphics graphics) {
-		int ballIdx = 0;
-		while (solver.hasNext()) {
-			Agent currentBall = solver.next();
-			graphics.setColor(Color.YELLOW);
-			if (solver.hasSolution()) {
-				printLeader(graphics, ballIdx + 1, currentBall);
-			}
-
-			renderer.drawBalls(ballIdx + 1, "" + currentBall.getId());
-			if (quantity == 1) {
-				continue;
-			}
-
-			if (currentBall.getLeftMsg() > 0) {
-				renderer.drawMsgs(ballIdx, "" + currentBall.getLeftMsg());
-			}
-			ballIdx++;
+	@Override
+	protected void createMsgs(Agent currentBall, int ballIdx) {
+		if (currentBall.getLeftMsg() > 0) {
+			renderer.drawMsgs(ballIdx, "" + currentBall.getLeftMsg());
 		}
 	}
 
-	private void printLeader(Graphics graphics, int ballIdx, Agent currentBall) {
-		if (currentBall.getLeftMsg() != currentBall.getId()) {
-			graphics.setColor(Color.YELLOW);
-		} else {
-			renderer.paintLeader(ballIdx);
+	@Override
+	protected void createLeader(Graphics graphics, Agent currentBall,
+			int ballIdx) {
+		if (solver.hasSolution()) {
+			printLeader(graphics, ballIdx + 1, currentBall);
 		}
+	}
+
+	@Override
+	protected void createBalls(Agent currentBall, int ballIdx) {
+		renderer.drawBalls(ballIdx + 1, "" + currentBall.getId());
 	}
 
 }
