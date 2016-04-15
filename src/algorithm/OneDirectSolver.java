@@ -1,11 +1,11 @@
 package algorithm;
 
-import graphics.OneDirectSolvable;
 
-public class OneDirectSolver extends Solver implements OneDirectSolvable {
+public class OneDirectSolver extends Solver {
 
 	private int step;
 
+	@Override
 	public void solve() {
 		if (step == 0) {
 			afterStart();
@@ -29,7 +29,6 @@ public class OneDirectSolver extends Solver implements OneDirectSolvable {
 		}
 		while (list.hasNext()) {
 			list.next().updateLeftMsgs();
-			;
 		}
 	}
 
@@ -44,6 +43,7 @@ public class OneDirectSolver extends Solver implements OneDirectSolvable {
 		}
 	}
 
+	@Override
 	public void initiateStartState() {
 		Agent current;
 		while (list.hasNext()) {
@@ -54,6 +54,7 @@ public class OneDirectSolver extends Solver implements OneDirectSolvable {
 		step = 0;
 	}
 
+	@Override
 	public String printMsgs() {
 		String s = "";
 		Agent next;
