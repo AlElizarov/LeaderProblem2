@@ -10,6 +10,9 @@ import org.junit.runners.Suite.SuiteClasses;
     TestOneDirectSolver.class,
     TestBiDirectSolver.class,
     TestMyTrigonometry.class,
+    TestCenter.class,
+    TestInterval.class,
+    TestLineSegment.class
 })
 
 public class TestSuite {}

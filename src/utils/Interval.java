@@ -22,6 +22,11 @@ public class Interval {
 		start += shift;
 		end += shift;
 	}
+	
+	public void moveDown(int shift) {
+		start -= shift;
+		end -= shift;
+	}
 
 	public int getCenter() {
 		return (start+end)/2;

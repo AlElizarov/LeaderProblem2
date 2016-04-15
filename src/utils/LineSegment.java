@@ -38,4 +38,12 @@ public class LineSegment {
 		return new LineSegment(xInterval.turnBack(), yInterval.turnBack());
 	}
 
+	public void moveXLeft(int shift) {
+		xInterval.moveDown(shift);
+	}
+
+	public void moveYDown(int shift) {
+		yInterval.moveDown(shift);
+	}
+
 }
