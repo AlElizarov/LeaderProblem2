@@ -32,26 +32,32 @@ public abstract class Solver implements ISolver {
 		return leaderId;
 	}
 
+	@Override
 	public void add(Agent agent) {
 		list.add(agent);
 	}
 
+	@Override
 	public void addAll(Agent[] agent) {
 		list.addAll(agent);
 	}
 
+	@Override
 	public void add(int item) {
 		list.add(item);
 	}
 
+	@Override
 	public void addAll(int[] item) {
 		list.addAll(item);
 	}
 
+	@Override
 	public void add(String item) {
 		list.add(item);
 	}
 
+	@Override
 	public void addAll(String[] item) {
 		list.addAll(item);
 	}
