@@ -1,21 +1,26 @@
 package graphics;
 
-import java.awt.Graphics;
+import java.awt.Color;
+import java.awt.Font;
 
-public class OnePanelRenderer extends AbstractPanelRenderer {
+import utils.LineSegment;
 
-	public OnePanelRenderer(Graphics graphics, int quantity) {
-		super(graphics, quantity);
+public class OneDirectRenderer extends AbstractRenderer implements OneDirectRendable {
+
+	public OneDirectRenderer(int quantity) {
+		super(quantity);
 	}
 
-	public OnePanelRenderer(Graphics graphics, MyCoord coord, int quantity) {
-		super(graphics, coord, quantity);
+	public OneDirectRenderer(Center coord, int quantity) {
+		super(coord, quantity);
 	}
 
-	protected void drawLines(int xStart, int yStart, int xEnd, int yEnd) {
-		drawArrow(xStart, yStart, xEnd, yEnd);
+	@Override
+	protected void drawLines(LineSegment segment) {
+		drawArrow(segment);
 	}
 
+	@Override
 	protected void setRenderParameters() {
 		if (quantity < 10) {
 			setParametres(35, 10, 24, 20);
@@ -28,17 +33,23 @@ public class OnePanelRenderer extends AbstractPanelRenderer {
 		}
 		maxQuantity = 39;
 	}
-
+	
 	@Override
-	protected void drawLeftMsgs(int x1, int x2, int y1, int y2, String leftMsg) {
-	}
-
-	@Override
-	protected void drawRightMsgs(int x1, int x2, int y1, int y2, String leftMsg) {
-	}
-
-	@Override
-	public void drawCurrentLeaders(int ballIdx) {
+	public void drawMsgs(int ballIdx, String msg) {
+		int x1 = xCoordBall(ballIdx);
+		int x2 = xCoordBall(ballIdx + 1);
+		int y1 = yCoordBall(ballIdx);
+		int y2 = yCoordBall(ballIdx + 1);
+		LineSegment segment = createSegment(x1, x2, y1, y2);
+		if (quantity == 2 && ballIdx == 0) {
+			segment.moveXRight(30);
+			segment.moveYTop(10);
+		}
+		graphics.setColor(Color.RED);
+		graphics.setFont(new Font("Veranda", Font.BOLD, msgSize));
+		int lineCenterX = segment.getCenterX();
+		int lineCenterY = segment.getCenterY();
+		graphics.drawString(msg, lineCenterX, lineCenterY);
 	}
 
 }

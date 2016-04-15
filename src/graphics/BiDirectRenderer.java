@@ -2,40 +2,54 @@ package graphics;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
 
-public class BiPanelRenderer extends AbstractPanelRenderer {
+import utils.LineSegment;
 
-	public BiPanelRenderer(Graphics graphics, int quantity) {
-		super(graphics, quantity);
+public class BiDirectRenderer extends AbstractRenderer implements
+		BiDirectRendable {
+
+	public BiDirectRenderer(int quantity) {
+		super(quantity);
 	}
 
-	public BiPanelRenderer(Graphics graphics, MyCoord coord, int quantity) {
-		super(graphics, coord, quantity);
+	public BiDirectRenderer(Center coord, int quantity) {
+		super(coord, quantity);
 	}
 
-	protected void drawLeftMsgs(int x1, int x2, int y1, int y2, String leftMsg) {
-		graphics.setColor(Color.RED);
+	public void drawLeftMsgs(int ballIdx, String leftMsg) {
+		int x1 = xCoordBall(ballIdx);
+		int x2 = xCoordBall(ballIdx + 1);
+		int y1 = yCoordBall(ballIdx);
+		int y2 = yCoordBall(ballIdx + 1);
+		LineSegment segment = createSegment(x1, x2, y1, y2);
+		graphics.setColor(Color.GREEN);
 		graphics.setFont(new Font("Veranda", Font.BOLD, msgSize));
-		int lineCenterX = (x1 + x2) / 2;
-		int lineCenterY = (y1 + y2) / 2;
-		lineCenterX = (lineCenterX + x2) / 2;
-		lineCenterY = (lineCenterY + y2) / 2;
+		int lineCenterX = segment.getCenterX();
+		int lineCenterY = segment.getCenterY();
+		segment = createSegment(lineCenterX, x2, lineCenterY, y2);
+		lineCenterX = segment.getCenterX();
+		lineCenterY = segment.getCenterY();
 		graphics.drawString(leftMsg, lineCenterX, lineCenterY);
 	}
 
-	protected void drawRightMsgs(int x1, int x2, int y1, int y2, String rightMsg) {
-		graphics.setColor(new Color(0, 100, 0));
+	public void drawRightMsgs(int ballIdx, String rightMsg) {
+		int x1 = xCoordBall(ballIdx - 1);
+		int x2 = xCoordBall(ballIdx);
+		int y1 = yCoordBall(ballIdx - 1);
+		int y2 = yCoordBall(ballIdx);
+		if (quantity == 2) {
+			x1 -= 20;
+			x2 -= 20;
+		}
+		LineSegment segment = createSegment(x1, x2, y1, y2);
+		graphics.setColor(Color.RED);
 		graphics.setFont(new Font("Veranda", Font.BOLD, msgSize));
-		int lineCenterX = (x1 + x2) / 2;
-		int lineCenterY = (y1 + y2) / 2;
-		lineCenterX = (x1 + lineCenterX) / 2;
-		lineCenterY = (y1 + lineCenterY) / 2;
+		int lineCenterX = segment.getCenterX();
+		int lineCenterY = segment.getCenterY();
+		segment = createSegment(x1, lineCenterX, y1, lineCenterY);
+		lineCenterX = segment.getCenterX();
+		lineCenterY = segment.getCenterY();
 		graphics.drawString(rightMsg, lineCenterX, lineCenterY);
-	}
-	
-	public void createRightMsgs(){
-		
 	}
 
 	@Override
@@ -49,13 +63,30 @@ public class BiPanelRenderer extends AbstractPanelRenderer {
 	}
 
 	@Override
-	protected void drawLines(int xStart, int yStart, int xEnd, int yEnd) {
-		drawArrow(xStart, yStart, xEnd, yEnd);
-		drawArrow(xEnd, yEnd, xStart, yStart);
+	protected void drawLines(LineSegment segment) {
+		drawArrow(segment);
+		drawArrow(segment.turnBack());
 	}
-	
-	public void drawCurrentLeaders(int ballIdx){
+
+	public void drawCurrentLeaders(int ballIdx) {
 		paintLeader(ballIdx, Color.BLUE, "CURRENT LEADER");
+	}
+
+	@Override
+	protected void createFirstBarForTwo() {
+		int margin = 8;
+		int xStart = xCoordBall(1);
+		int xEnd = xCoordBall(2);
+		int yStart = yCoordBall(1) - margin;
+		int yEnd = yCoordBall(2) - margin;
+		drawArrow(createSegment(xStart, xEnd, yStart, yEnd));
+		drawArrow(createSegment(xEnd, xStart, yEnd, yStart));
+		xStart = xCoordBall(2);
+		xEnd = xCoordBall(1);
+		yStart = yCoordBall(2) + margin;
+		yEnd = yCoordBall(1) + margin;
+		drawArrow(createSegment(xStart, xEnd, yStart, yEnd));
+		drawArrow(createSegment(xEnd, xStart, yEnd, yStart));
 	}
 
 }
